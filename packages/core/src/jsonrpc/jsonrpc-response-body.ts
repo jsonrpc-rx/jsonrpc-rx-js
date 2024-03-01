@@ -1,11 +1,11 @@
 import { toType } from '../util/to-type';
 import { JsonrpcError, validJsonrpcError } from './jsonrpc-error';
 
-export interface JsonrpcResponseBody {
+export interface JsonrpcResponseBody<T = any> {
   jsonrpc: '2.0';
   id: string | number;
   error?: JsonrpcError;
-  result?: any;
+  result?: T;
 }
 
 export function validJsonrpcResponseBody(responseBody: any) {

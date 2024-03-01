@@ -1,4 +1,4 @@
-type JsBuildInObjType = 'string' | 'number' | 'object' | 'array' | 'promise';
+type JsBuildInObjType = 'string' | 'number' | 'object' | 'array' | 'promise'  | 'function';
 
 export function toType(obj: any): JsBuildInObjType {
   const match = Object.prototype.toString.call(obj).match(/[a-zA-Z]+/g)?.[1];

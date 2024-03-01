@@ -60,24 +60,31 @@ importers:
         specifier: ^5.1.6
         version: 5.2.2
 
-  packages/client-server:
+  packages/client:
     dependencies:
-      cec-core:
-        specifier: ^1.0.1
+      '@cec/jsonrpc-core':
+        specifier: workspace:^
         version: link:../core
-      tsyringe:
-        specifier: ^4.8.0
-        version: 4.8.0
+      flatted:
+        specifier: ^3.2.9
+        version: 3.2.9
 
   packages/core:
     dependencies:
       flatted:
         specifier: ^3.2.9
         version: 3.2.9
-    devDependencies:
-      '@types/uuid':
-        specifier: ^9.0.2
-        version: 9.0.7
+
+  packages/server:
+    dependencies:
+      '@cec/jsonrpc-core':
+        specifier: workspace:^
+        version: link:../core
+      flatted:
+        specifier: ^3.2.9
+        version: 3.2.9
+
+  packages/server-decorator: {}
 
 packages:
 
@@ -951,10 +958,6 @@ packages:
 
   /@types/stack-utils@2.0.3:
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
-    dev: true
-
-  /@types/uuid@9.0.7:
-    resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
     dev: true
 
   /@types/yargs-parser@21.0.3:
@@ -3517,20 +3520,9 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
-  /tslib@1.14.1:
-    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-    dev: false
-
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
     dev: true
-
-  /tsyringe@4.8.0:
-    resolution: {integrity: sha512-YB1FG+axdxADa3ncEtRnQCFq/M0lALGLxSZeVNbTU8NqhOVc51nnv2CISTcvc1kyv6EGPtXVr0v6lWeDxiijOA==}
-    engines: {node: '>= 6.0.0'}
-    dependencies:
-      tslib: 1.14.1
-    dev: false
 
   /type-detect@4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}

@@ -30,3 +30,7 @@ export function validJsonrpcResquestBody(resquestBody: any) {
 
   return validResult;
 }
+
+export function isJsonrpcRequestBodyParams(params: JsonrpcRequestBody['params']) {
+  return toType(params) === 'array' || toType(params) === 'object' || params == null;
+}

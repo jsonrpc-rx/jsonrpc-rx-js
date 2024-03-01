@@ -28,8 +28,5 @@
   },
   "dependencies": {
     "flatted": "^3.2.9"
-  },
-  "devDependencies": {
-    "@types/uuid": "^9.0.2"
   }
 }

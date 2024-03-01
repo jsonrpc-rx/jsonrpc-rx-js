@@ -1,4 +1,4 @@
-export function invokeToPromise(anyFunc: (...args: any[]) => any, ...args: any[]): Promise<any> {
+export function invokeAsPromise(anyFunc: (...args: any[]) => any, ...args: any[]): Promise<any> {
   let returnVal: any;
   try {
     returnVal = anyFunc.call({}, ...args);

@@ -25,5 +25,9 @@
     "build:cjs": "rollup -c --environment NODE_ENV:cjs",
     "build:dts": "rollup -c --environment NODE_ENV:dts",
     "clean": "rimraf dist/ & rimraf node_modules/"
+  },
+  "dependencies": {
+    "@cec/jsonrpc-core": "workspace:^",
+    "flatted": "^3.2.9"
   }
 }

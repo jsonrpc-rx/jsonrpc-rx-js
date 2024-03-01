@@ -8,7 +8,7 @@
     "test:core": "pnpm run -F cec-core test",
     "test:client-server": "pnpm run -F cec-client-server test",
     "build": "run-s build:*",
-    "build:core": "pnpm run -F cec-core build",
+    "build:core": "pnpm run -F @cec/jsonrpc-core build",
     "build:client-server": "pnpm run -F cec-client-server build",
     "clean": "run-p clean:* && rm -rf node_modules",
     "clean:core": "pnpm run -F cec-core clean",
