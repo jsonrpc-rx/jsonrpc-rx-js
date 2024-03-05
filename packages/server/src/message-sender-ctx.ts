@@ -1,15 +1,53 @@
 import { stringify } from 'flatted';
-import { MessageBody, JsonrpcCecErrorMessage, JsonrpcErrorCode, MessageSender, JsonrpcBaseConfig } from '@cec/jsonrpc-core';
+import {
+  MessageBody,
+  JsonrpcCecErrorMessage,
+  JsonrpcErrorCode,
+  MessageSender,
+  JsonrpcBaseConfig,
+  JsonrpcResponseBody,
+  composeInterceptors,
+  ResponseInterceptor,
+  invokeAsPromise,
+} from '@cec/jsonrpc-core';
 
 export class MessageSenderCtx {
   constructor(
     private messageSender: MessageSender,
-    baseConfig?: JsonrpcBaseConfig,
+    private baseConfig?: JsonrpcBaseConfig,
   ) {}
 
-  send = (messageBody: MessageBody) => {
-    const message = stringifyMessageBody(messageBody);
-    // TODO：实现插件的功能
+  send = async (responseBody: JsonrpcResponseBody) => {
+    let filteredResponseBody = responseBody;
+    if (this.baseConfig?.responseInterceptors) {
+      try {
+        const interceptor = composeInterceptors<ResponseInterceptor>(this.baseConfig?.responseInterceptors);
+        filteredResponseBody = await invokeAsPromise(interceptor, responseBody);
+      } catch (error) {
+        filteredResponseBody = {
+          id: responseBody.id,
+          jsonrpc: '2.0',
+          error: {
+            code: JsonrpcErrorCode.ServerError,
+            message: JsonrpcCecErrorMessage.ServerError + ': ' + 'the response interceptors throw error in server end',
+            data: error,
+          },
+        };
+      }
+    }
+
+    let message: string;
+    try {
+      message = stringifyMessageBody(filteredResponseBody);
+    } catch (error) {
+      const errorResponseBody: JsonrpcResponseBody = {
+        ...filteredResponseBody,
+        result: undefined,
+        error: error,
+      };
+      message = stringifyMessageBody(errorResponseBody);
+    }
+
     this.messageSender.call({}, message);
   };
 }

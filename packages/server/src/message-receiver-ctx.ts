@@ -6,19 +6,42 @@ import {
   JsonrpcCecErrorMessage,
   JsonrpcErrorCode,
   JsonrpcBaseConfig,
+  JsonrpcRequestBody,
+  isJsonrpcRequestBody,
+  composeInterceptors,
+  RequestInterceptor,
+  invokeAsPromise,
+  JsonrpcResponseBody,
 } from '@cec/jsonrpc-core';
 
 export class MessageReceiverCtx {
   constructor(
     private messageReceiver: MessageReceiver,
-    baseConfig?: JsonrpcBaseConfig,
+    private baseConfig?: JsonrpcBaseConfig,
   ) {}
 
-  receive = (receiveHandler: (message: MessageBody) => void) => {
-    const messageHandler: MessageHandler = (message: string) => {
-      const messageBody = parseMessage(message);
-      // TODO: 实现插件的功能
-      // TODO: 处理执行中的异常
+  receive = (receiveHandler: (messageBody: MessageBody) => void) => {
+    const messageHandler: MessageHandler = async (message: string) => {
+      let messageBody = parseMessage(message) as MessageBody; // 这一步发生错误的话，错误暂时不处理
+      if (!isJsonrpcRequestBody(messageBody)) return;
+
+      if (this.baseConfig?.requestInterceptors) {
+        try {
+          const interceptor = composeInterceptors<RequestInterceptor>(this.baseConfig.requestInterceptors);
+          messageBody = (await invokeAsPromise(interceptor, messageBody)) as JsonrpcRequestBody;
+        } catch (data) {
+          messageBody = {
+            id: messageBody.id,
+            jsonrpc: '2.0',
+            error: {
+              code: JsonrpcErrorCode.ServerError,
+              message: JsonrpcCecErrorMessage.ServerError + ': ' + 'the request interceptors throw error in server end',
+              data,
+            },
+          } as JsonrpcResponseBody;
+        }
+      }
+
       receiveHandler.call({}, messageBody);
     };
     return this.messageReceiver.call({}, messageHandler);

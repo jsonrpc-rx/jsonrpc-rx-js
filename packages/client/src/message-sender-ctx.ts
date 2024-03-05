@@ -17,14 +17,24 @@ export class MessageSenderCtx {
     private baseConfig?: JsonrpcBaseConfig,
   ) {}
 
-  send = (messageBody: JsonrpcRequestBody) => {
+  send = async (messageBody: JsonrpcRequestBody) => {
+    let requestBody: JsonrpcRequestBody;
+
     if (this.baseConfig?.requestInterceptors) {
-      const interceptor = composeInterceptors<RequestInterceptor>(this.baseConfig?.requestInterceptors);
-      invokeAsPromise(interceptor, messageBody).then(() => {
-        const message = stringifyMessageBody(messageBody);
-        this.messageSender.call({}, message);
-      });
+      try {
+        const interceptor = composeInterceptors<RequestInterceptor>(this.baseConfig?.requestInterceptors);
+        requestBody = await invokeAsPromise(interceptor, messageBody);
+      } catch (error) {
+        const internalError = {
+          code: JsonrpcErrorCode.InternalError,
+          message: JsonrpcCecErrorMessage.InternalError + ': ' + 'the request interceptors throw error',
+          data: error,
+        };
+        throw new Error(internalError.toString());
+      }
     }
+    const message = stringifyMessageBody(requestBody!);
+    this.messageSender.call({}, message);
   };
 }
 

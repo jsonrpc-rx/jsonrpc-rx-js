@@ -1,5 +1,4 @@
 import { toType } from 'src/util/to-type';
-import { JsonrpcError } from './jsonrpc-error';
 import { JsonrpcRequestBody } from './jsonrpc-request-body';
 import { JsonrpcResponseBody } from './jsonrpc-response-body';
 import { invokeAsPromise } from 'src/util/invoke-as-promise';

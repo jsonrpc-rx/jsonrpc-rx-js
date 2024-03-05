@@ -23,6 +23,8 @@ import {
   FOR_SUBSCRIBLE_CANCEL_SUFFIX,
   FOR_SUBSCRIBLE_SUFFIX,
   SubscribleResultSatate,
+  isJsonrpcResponseBody,
+  validJsonrpcError,
 } from '@cec/jsonrpc-core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -91,7 +93,7 @@ export class JsonrpcServer implements IJsonrpcServer {
             ...result,
           },
         };
-        this.msgSenderCtx.send(responseBody); // TODO: 错误处理————给 client 返回错误
+        this.msgSenderCtx.send(responseBody);
       };
 
       const publisher: Publisher = ensurePublisher({
@@ -150,6 +152,11 @@ export class JsonrpcServer implements IJsonrpcServer {
 
   private receiveMessage() {
     const receiveHandler = (messageBody: MessageBody) => {
+      if (messageBody.id != null && isJsonrpcResponseBody(messageBody) && validJsonrpcError(messageBody).isValid) {
+        this.msgSenderCtx.send(messageBody as JsonrpcResponseBody);
+        return;
+      }
+
       this.receiveMessageForOnCall(messageBody as JsonrpcRequestBody);
       this.receiveMessageForOnNotify(messageBody as JsonrpcRequestBody);
     };
@@ -170,7 +177,7 @@ export class JsonrpcServer implements IJsonrpcServer {
           message: JsonrpcCecErrorMessage.MethodNotFound + ': ' + `the method [${method}] not found`,
         },
       };
-      this.msgSenderCtx.send(responseBody); // TODO: 错误处理————给 client 返回错误
+      this.msgSenderCtx.send(responseBody);
       return;
     }
 
@@ -189,7 +196,7 @@ export class JsonrpcServer implements IJsonrpcServer {
       .finally(() => {
         responseBody.jsonrpc = '2.0';
         responseBody.id = id;
-        this.msgSenderCtx.send(responseBody); // TODO: 错误处理————给 client 返回错误
+        this.msgSenderCtx.send(responseBody);
       });
   }
 
