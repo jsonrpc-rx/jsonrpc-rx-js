@@ -1,7 +1,7 @@
 import {
   MessageReceiver,
   MessageBody,
-  JsonrpcCecErrorMessage,
+  JsonrpcErrorMessage,
   JsonrpcError,
   JsonrpcErrorCode,
   MessageSender,
@@ -77,7 +77,7 @@ export class JsonrpcClient implements IJsonrpcClient {
     const timer = setTimeout(() => {
       const jsonrpcError: JsonrpcError = {
         code: JsonrpcErrorCode.InternalError,
-        message: JsonrpcCecErrorMessage + ': ' + `the method ${method} has called failed, reason: timeout`,
+        message: JsonrpcErrorMessage + ': ' + `the method ${method} has called failed, reason: timeout`,
       };
       reject(new Error(jsonrpcError.toString()));
     }, delayTime);
@@ -109,7 +109,7 @@ export class JsonrpcClient implements IJsonrpcClient {
       if (!(toType(subscribeId) === 'string' || toType(subscribeId) === 'number')) {
         const internalError = {
           code: JsonrpcErrorCode.InternalError,
-          message: JsonrpcCecErrorMessage.InternalError + ': ' + 'the subscribe-id of response is invalid when subscribing',
+          message: JsonrpcErrorMessage.InternalError + ': ' + 'the subscribe-id of response is invalid when subscribing',
         };
         throw new Error(internalError.toString());
       }
@@ -200,7 +200,7 @@ export class JsonrpcClient implements IJsonrpcClient {
   private throwParamsInvalidError() {
     const internalError = {
       code: JsonrpcErrorCode.InternalError,
-      message: JsonrpcCecErrorMessage.InternalError + ': ' + 'the parameters invalid',
+      message: JsonrpcErrorMessage.InternalError + ': ' + 'the parameters invalid',
     };
     throw new Error(internalError.toString());
   }

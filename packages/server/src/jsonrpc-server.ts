@@ -1,7 +1,7 @@
 import {
   MessageReceiver,
   MessageBody,
-  JsonrpcCecErrorMessage,
+  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   MessageSender,
   toType,
@@ -88,9 +88,9 @@ export class JsonrpcServer implements IJsonrpcServer {
           jsonrpc: '2.0',
           id: subscribeId, // 这个 id 不能被采信，这里只是为了数据结构能通过验证，实际上，这个 id 也不会被采用
           result: {
+            ...result,
             isSubscribleResult: true,
             subjectName,
-            ...result,
           },
         };
         this.msgSenderCtx.send(responseBody);
@@ -174,7 +174,7 @@ export class JsonrpcServer implements IJsonrpcServer {
         jsonrpc: '2.0',
         error: {
           code: JsonrpcErrorCode.MethodNotFound,
-          message: JsonrpcCecErrorMessage.MethodNotFound + ': ' + `the method [${method}] not found`,
+          message: JsonrpcErrorMessage.MethodNotFound + ': ' + `the method [${method}] not found`,
         },
       };
       this.msgSenderCtx.send(responseBody);
@@ -189,7 +189,7 @@ export class JsonrpcServer implements IJsonrpcServer {
         (err: Error) =>
           (responseBody.error = {
             code: JsonrpcErrorCode.ServerError,
-            message: JsonrpcCecErrorMessage.ServerError,
+            message: JsonrpcErrorMessage.ServerError,
             data: err,
           }),
       )
@@ -213,7 +213,7 @@ export class JsonrpcServer implements IJsonrpcServer {
   private throwParamsInvalidError() {
     const internalError = {
       code: JsonrpcErrorCode.InternalError,
-      message: JsonrpcCecErrorMessage.InternalError + ': ' + 'the parameters invalid',
+      message: JsonrpcErrorMessage.InternalError + ': ' + 'the parameters invalid',
     };
     throw new Error(internalError.toString());
   }
@@ -221,7 +221,7 @@ export class JsonrpcServer implements IJsonrpcServer {
   private throwParamsRepeatedError(additionMessage: string) {
     const internalError = {
       code: JsonrpcErrorCode.InternalError,
-      message: JsonrpcCecErrorMessage.InternalError + ': ' + additionMessage,
+      message: JsonrpcErrorMessage.InternalError + ': ' + additionMessage,
     };
     throw new Error(internalError.toString());
   }

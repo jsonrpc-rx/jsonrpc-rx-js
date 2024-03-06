@@ -1,7 +1,7 @@
 import { stringify } from 'flatted';
 import {
   MessageBody,
-  JsonrpcCecErrorMessage,
+  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   MessageSender,
   JsonrpcBaseConfig,
@@ -29,7 +29,7 @@ export class MessageSenderCtx {
           jsonrpc: '2.0',
           error: {
             code: JsonrpcErrorCode.ServerError,
-            message: JsonrpcCecErrorMessage.ServerError + ': ' + 'the response interceptors throw error in server end',
+            message: JsonrpcErrorMessage.ServerError + ': ' + 'the response interceptors throw error in server end',
             data: error,
           },
         };
@@ -58,7 +58,7 @@ function stringifyMessageBody(messageBody: MessageBody): string {
   } catch (error) {
     const serverError = {
       code: JsonrpcErrorCode.ServerError,
-      message: JsonrpcCecErrorMessage.ServerError + ': ' + 'stringify error in server end',
+      message: JsonrpcErrorMessage.ServerError + ': ' + 'stringify error in server end',
       data: error,
     };
     throw new Error(serverError.toString());

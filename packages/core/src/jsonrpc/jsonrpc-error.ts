@@ -11,7 +11,7 @@ export enum JsonrpcErrorCode {
   ServerError = -32000, // -32000 to -32099	Server error服务端错误	预留用于自定义的服务器错误。
 }
 
-export enum JsonrpcCecErrorMessage {
+export enum JsonrpcErrorMessage {
   ParseError = 'Parse error',
   InvalidRequest = 'Invalid request',
   MethodNotFound = 'Method not found',

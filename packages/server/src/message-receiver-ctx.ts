@@ -3,7 +3,7 @@ import {
   MessageHandler,
   MessageReceiver,
   MessageBody,
-  JsonrpcCecErrorMessage,
+  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   JsonrpcBaseConfig,
   JsonrpcRequestBody,
@@ -35,7 +35,7 @@ export class MessageReceiverCtx {
             jsonrpc: '2.0',
             error: {
               code: JsonrpcErrorCode.ServerError,
-              message: JsonrpcCecErrorMessage.ServerError + ': ' + 'the request interceptors throw error in server end',
+              message: JsonrpcErrorMessage.ServerError + ': ' + 'the request interceptors throw error in server end',
               data,
             },
           } as JsonrpcResponseBody;
@@ -54,7 +54,7 @@ function parseMessage(message: string): MessageBody {
   } catch (error) {
     const parseError = {
       code: JsonrpcErrorCode.ParseError,
-      message: JsonrpcCecErrorMessage.ParseError,
+      message: JsonrpcErrorMessage.ParseError,
       data: error,
     };
     throw new Error(parseError.toString());

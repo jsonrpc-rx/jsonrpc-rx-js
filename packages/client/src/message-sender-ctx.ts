@@ -1,7 +1,7 @@
 import { stringify } from 'flatted';
 import {
   MessageBody,
-  JsonrpcCecErrorMessage,
+  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   MessageSender,
   JsonrpcBaseConfig,
@@ -27,7 +27,7 @@ export class MessageSenderCtx {
       } catch (error) {
         const internalError = {
           code: JsonrpcErrorCode.InternalError,
-          message: JsonrpcCecErrorMessage.InternalError + ': ' + 'the request interceptors throw error',
+          message: JsonrpcErrorMessage.InternalError + ': ' + 'the request interceptors throw error',
           data: error,
         };
         throw new Error(internalError.toString());
@@ -44,7 +44,7 @@ function stringifyMessageBody(messageBody: MessageBody): string {
   } catch (error) {
     const invalidRequest = {
       code: JsonrpcErrorCode.InvalidRequest,
-      message: JsonrpcCecErrorMessage.InvalidRequest,
+      message: JsonrpcErrorMessage.InvalidRequest,
       data: error,
     };
     throw new Error(invalidRequest.toString());

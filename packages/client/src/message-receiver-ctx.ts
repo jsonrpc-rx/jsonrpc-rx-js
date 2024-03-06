@@ -3,7 +3,7 @@ import {
   MessageHandler,
   MessageReceiver,
   MessageBody,
-  JsonrpcCecErrorMessage,
+  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   ResponseInterceptor,
   composeInterceptors,
@@ -35,7 +35,7 @@ export class MessageReceiverCtx {
             result: undefined,
             error: {
               code: JsonrpcErrorCode.InternalError,
-              message: JsonrpcCecErrorMessage.InternalError + ': ' + 'the response interceptors throw error',
+              message: JsonrpcErrorMessage.InternalError + ': ' + 'the response interceptors throw error',
               data,
             },
           };
@@ -54,7 +54,7 @@ function parseMessage(message: string): MessageBody {
   } catch (error) {
     const serverError = {
       code: JsonrpcErrorCode.ServerError,
-      message: JsonrpcCecErrorMessage.ServerError + ': ' + 'The response of server-end can not be parsed',
+      message: JsonrpcErrorMessage.ServerError + ': ' + 'The response of server-end can not be parsed',
       data: error,
     };
     throw new Error(serverError.toString());
