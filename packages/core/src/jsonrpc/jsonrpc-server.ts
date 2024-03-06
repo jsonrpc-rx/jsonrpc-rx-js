@@ -1,5 +1,5 @@
-import { IDisposable } from 'src/jsonrpc-rx/disposable';
-import { ParamsSubject } from 'src/jsonrpc-rx/params-subject';
+import { IDisposable } from '../jsonrpc-rx/disposable';
+import { ParamsSubject } from '../jsonrpc-rx/params-subject';
 
 export interface IJsonrpcServer extends ParamsSubject {
   /**

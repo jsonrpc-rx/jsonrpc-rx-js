@@ -1,8 +1,8 @@
-import { toType } from 'src/util/to-type';
+import { toType } from '../util/to-type';
 
 export type SubscribleResultDataItem = {
   subscribeId: string | number;
-  subscribeValue: any;
+  subscribeValue?: any;
 };
 
 export type SubscribleResultErrorItem = {
@@ -26,12 +26,25 @@ export type SubscribleResult = {
 
 export function isSubscribleResult(result: SubscribleResult): boolean {
   const { isSubscribleResult, state, subjectName, data, error } = result ?? {};
+
+  const isData = toType(data) === 'array' && (data as any).every(isSubscribleResultDataItem) && error == null;
+  const isError = toType(error) === 'array' && (error as any).every(isSubscribleResultErrorItem) && data == null;
+
   return (
     toType(result) === 'object' &&
     !!isSubscribleResult &&
     [SubscribleResultSatate.Next, SubscribleResultSatate.Error, SubscribleResultSatate.Complete].includes(state) &&
     toType(subjectName) === 'string' &&
-    (toType(data) === 'array' || data == null) &&
-    (toType(error) === 'array' || error == null)
+    (isData || isError)
   );
+}
+
+function isSubscribleResultDataItem(item: SubscribleResultDataItem): boolean {
+  const { subscribeId } = item ?? {};
+  return toType(item) === 'object' && (toType(subscribeId) === 'string' || toType(subscribeId) === 'number');
+}
+
+function isSubscribleResultErrorItem(item: SubscribleResultErrorItem): boolean {
+  const { subscribeId, subscribeError } = item ?? {};
+  return toType(item) === 'object' && (toType(subscribeId) === 'string' || toType(subscribeId) === 'number') && subscribeError != null;
 }

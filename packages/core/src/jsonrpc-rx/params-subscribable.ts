@@ -1,4 +1,4 @@
-import { toType } from 'src/util/to-type';
+import { toType } from '../util/to-type';
 import { IDisposable } from './disposable';
 
 export interface Observer<T = any> {
@@ -20,6 +20,7 @@ export function isObserver(observer: Observer): boolean {
   const { onNext, onError, onComplete } = observer ?? {};
 
   return (
+    toType(observer) === 'object' &&
     toType(onNext) === 'function' &&
     (toType(onError) === 'function' || onError == null) &&
     (toType(onComplete) === 'function' || onComplete == null)

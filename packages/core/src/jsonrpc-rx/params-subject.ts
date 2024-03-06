@@ -23,7 +23,7 @@ export interface ParamsSubject {
 /**
  *
  */
-export function ensurePublisher(rawPublisher: Publisher) {
+export function ensurePublisher(rawPublisher: Publisher): Publisher {
   let hasCompleted = false;
 
   return {

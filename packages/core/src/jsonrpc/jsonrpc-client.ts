@@ -1,4 +1,4 @@
-import { ParamsSubscribable } from 'src/jsonrpc-rx/params-subscribable';
+import { ParamsSubscribable } from '../jsonrpc-rx/params-subscribable';
 
 export interface IJsonrpcClient extends ParamsSubscribable {
   /**

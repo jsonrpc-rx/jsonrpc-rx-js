@@ -1,15 +1,15 @@
-import { toType } from 'src/util/to-type';
+import { toType } from '../util/to-type';
 import { JsonrpcRequestBody } from './jsonrpc-request-body';
 import { JsonrpcResponseBody } from './jsonrpc-response-body';
-import { invokeAsPromise } from 'src/util/invoke-as-promise';
+import { invokeAsPromise } from '../util/invoke-as-promise';
 
-export interface RequestInterceptor {
-  (requestBody: JsonrpcRequestBody): Promise<JsonrpcRequestBody | Error> | JsonrpcRequestBody;
+export interface Interceptor<T extends JsonrpcRequestBody | JsonrpcResponseBody> {
+  (messageBody: T): Promise<T> | T;
 }
 
-export interface ResponseInterceptor {
-  (responseBody: JsonrpcResponseBody): Promise<JsonrpcResponseBody | Error> | JsonrpcResponseBody;
-}
+export interface RequestInterceptor extends Interceptor<JsonrpcRequestBody> {}
+
+export interface ResponseInterceptor extends Interceptor<JsonrpcResponseBody> {}
 
 export interface JsonrpcBaseConfig {
   requestInterceptors?: RequestInterceptor[];
@@ -21,7 +21,7 @@ export function isJsonrpcBaseConfig(jsonrpcBaseConfig?: JsonrpcBaseConfig): bool
 
   const isRequestInterceptors =
     requestInterceptors == null ||
-    (toType(requestInterceptors) === 'array' && !!responseInterceptors?.every((item) => toType(item) === 'function'));
+    (toType(requestInterceptors) === 'array' && !!requestInterceptors?.every((item) => toType(item) === 'function'));
   const isResponseInterceptors =
     responseInterceptors == null ||
     (toType(responseInterceptors) === 'array' && !!responseInterceptors?.every((item) => toType(item) === 'function'));
@@ -29,14 +29,18 @@ export function isJsonrpcBaseConfig(jsonrpcBaseConfig?: JsonrpcBaseConfig): bool
   return isRequestInterceptors && isResponseInterceptors;
 }
 
-export function composeInterceptors<T extends RequestInterceptor | ResponseInterceptor>(interceptors: T[]): T {
-  const interceptor = async (messageBody: any) => {
-    let currResult = messageBody;
-    for (const intercep of interceptors) {
-      await invokeAsPromise(intercep, currResult);
+export function composeInterceptors<T extends JsonrpcRequestBody | JsonrpcResponseBody>(interceptors: Interceptor<T>[]) {
+  return composeAsPromise(interceptors) as Interceptor<T>;
+}
+
+export function composeAsPromise(funcs: ((arg: any) => Promise<any> | any)[]) {
+  const finalFunc = async (param: any) => {
+    let currResult = param;
+    for (const func of funcs) {
+      currResult = await invokeAsPromise(func, currResult);
     }
     return currResult;
   };
 
-  return interceptor as any;
+  return finalFunc;
 }

@@ -17,13 +17,13 @@ export function validJsonrpcResquestBody(resquestBody: any) {
   } else if (jsonrpc != '2.0') {
     validResult.validMessage = 'A String specifying the version of the JSON-RPC protocol. MUST be exactly "2.0"';
     validResult.isValid = false;
-  } else if (toType(id) != 'string' && toType(id) != 'number' && id != null) {
+  } else if (!(toType(id) === 'string' || toType(id) === 'number' || id == null)) {
     validResult.validMessage = 'The request id for the rpc call MUST contain a a String, Number, or NULL';
     validResult.isValid = false;
-  } else if (toType(method) === 'string') {
+  } else if (toType(method) != 'string') {
     validResult.validMessage = 'The request method for the rpc call MUST be String';
     validResult.isValid = false;
-  } else if (toType(params) != 'object' && toType(params) != 'array' && params != null) {
+  } else if (!(toType(params) === 'object' || toType(params) === 'array' || params == null)) {
     validResult.validMessage = 'The request parameters for the rpc call MUST contain a Object, Array, or NULL';
     validResult.isValid = false;
   }

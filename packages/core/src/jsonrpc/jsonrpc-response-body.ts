@@ -18,7 +18,7 @@ export function validJsonrpcResponseBody(responseBody: any) {
   } else if (jsonrpc != '2.0') {
     validResult.validMessage = 'A String specifying the version of the JSON-RPC protocol. MUST be exactly "2.0"';
     validResult.isValid = false;
-  } else if (toType(id) != 'string' && toType(id) != 'number') {
+  } else if (!(toType(id) === 'string' || toType(id) === 'number')) {
     validResult.validMessage = 'The response id for the rpc call MUST contain a a String, or Number';
     validResult.isValid = false;
   } else if (error != null && result == null) {
