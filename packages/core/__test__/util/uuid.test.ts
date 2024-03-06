@@ -1,8 +1,7 @@
 import { uuid } from '../../src/util/uuid';
+import { it } from 'vitest';
 
-describe('uuid', () => {
-  test('[Normal] uuid', () => {
-    expect(uuid().length).toEqual(36);
-    expect(uuid(16).length).toEqual(16);
-  });
+it('uuid normal test', ({ expect }) => {
+  expect(uuid().length).toEqual(36);
+  expect(uuid(16).length).toEqual(16); 
 });
