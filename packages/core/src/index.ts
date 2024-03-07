@@ -10,6 +10,7 @@ export {
   JsonrpcBaseConfig,
   isJsonrpcBaseConfig,
   composeInterceptors,
+  composeAsPromise,
 } from './jsonrpc/jsonrpc-base-config';
 
 export { MessageBody, isJsonrpcRequestBody, isJsonrpcResponseBody } from './message/message-body';

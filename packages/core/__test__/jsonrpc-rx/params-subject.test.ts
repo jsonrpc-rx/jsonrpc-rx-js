@@ -1,4 +1,4 @@
-import { Publisher, ensurePublisher } from '../../src/jsonrpc-rx/params-subject';
+import { Publisher, ensurePublisher } from '../../src';
 import { it } from 'vitest';
 
 it('ensurePublisher normal', async ({ expect }) => {

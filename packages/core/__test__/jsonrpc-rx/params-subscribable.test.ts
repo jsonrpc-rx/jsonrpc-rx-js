@@ -1,4 +1,4 @@
-import { Observer, isObserver } from '../../src/jsonrpc-rx/params-subscribable';
+import { Observer, isObserver } from '../../src';
 import { describe, it } from 'vitest';
 
 describe('isObserver normal', async () => {

@@ -1,4 +1,4 @@
-import { toType } from '../../src/util/to-type';
+import { toType } from '../../src';
 import { describe, it } from 'vitest';
 
 describe('toType normal', () => {

@@ -1,6 +1,11 @@
-import { JsonrpcBaseConfig, composeAsPromise, composeInterceptors, isJsonrpcBaseConfig } from '../../src/jsonrpc/jsonrpc-base-config';
-import { JsonrpcRequestBody } from '../../src/jsonrpc/jsonrpc-request-body';
-import { JsonrpcResponseBody } from '../../src/jsonrpc/jsonrpc-response-body';
+import {
+  JsonrpcBaseConfig,
+  composeAsPromise,
+  composeInterceptors,
+  isJsonrpcBaseConfig,
+  JsonrpcRequestBody,
+  JsonrpcResponseBody,
+} from '../../src';
 import { describe, it } from 'vitest';
 
 describe('isJsonrpcBaseConfig normal', async () => {
@@ -32,7 +37,7 @@ describe('isJsonrpcBaseConfig error', async () => {
   const jsonrpcBaseConfig01: any = {
     requestInterceptors: [[], {}],
   };
-  const jsonrpcBaseConfig02: any  = {
+  const jsonrpcBaseConfig02: any = {
     responseInterceptors: [1, ''],
   };
 

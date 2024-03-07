@@ -1,4 +1,4 @@
-import { Deferred } from '../../src/util/deferred';
+import { Deferred } from '../../src';
 import { it } from 'vitest';
 
 it('Defferred resolve', async ({ expect }) => {

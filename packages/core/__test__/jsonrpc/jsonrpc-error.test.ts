@@ -1,4 +1,4 @@
-import { JsonrpcErrorMessage, JsonrpcError, JsonrpcErrorCode, validJsonrpcError } from '../../src/jsonrpc/jsonrpc-error';
+import { JsonrpcErrorMessage, JsonrpcError, JsonrpcErrorCode, validJsonrpcError } from '../../src';
 import { describe, it } from 'vitest';
 
 describe('isJsonrpcBaseConfig normal', async () => {

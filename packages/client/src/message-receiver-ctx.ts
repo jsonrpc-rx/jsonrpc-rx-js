@@ -27,7 +27,7 @@ export class MessageReceiverCtx {
 
       if (this.baseConfig?.responseInterceptors) {
         try {
-          const interceptor = composeInterceptors<ResponseInterceptor>(this.baseConfig.responseInterceptors!);
+          const interceptor = composeInterceptors<JsonrpcResponseBody>(this.baseConfig.responseInterceptors!);
           responseBody = await invokeAsPromise(interceptor, responseBody);
         } catch (data) {
           responseBody = {

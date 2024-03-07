@@ -7,7 +7,6 @@ import {
   JsonrpcBaseConfig,
   JsonrpcResponseBody,
   composeInterceptors,
-  ResponseInterceptor,
   invokeAsPromise,
 } from '@cec/jsonrpc-core';
 
@@ -21,7 +20,7 @@ export class MessageSenderCtx {
     let filteredResponseBody = responseBody;
     if (this.baseConfig?.responseInterceptors) {
       try {
-        const interceptor = composeInterceptors<ResponseInterceptor>(this.baseConfig?.responseInterceptors);
+        const interceptor = composeInterceptors<JsonrpcResponseBody>(this.baseConfig?.responseInterceptors);
         filteredResponseBody = await invokeAsPromise(interceptor, responseBody);
       } catch (error) {
         filteredResponseBody = {

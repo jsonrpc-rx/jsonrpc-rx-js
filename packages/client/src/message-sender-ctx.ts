@@ -22,7 +22,7 @@ export class MessageSenderCtx {
 
     if (this.baseConfig?.requestInterceptors) {
       try {
-        const interceptor = composeInterceptors<RequestInterceptor>(this.baseConfig?.requestInterceptors);
+        const interceptor = composeInterceptors<JsonrpcRequestBody>(this.baseConfig?.requestInterceptors);
         requestBody = await invokeAsPromise(interceptor, messageBody);
       } catch (error) {
         const internalError = {

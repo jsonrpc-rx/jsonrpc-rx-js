@@ -1,6 +1,5 @@
 import { describe, it } from 'vitest';
-import { JsonrpcResponseBody, validJsonrpcResponseBody } from '../../src/jsonrpc/jsonrpc-response-body';
-import { JsonrpcErrorMessage, JsonrpcErrorCode } from '../../src/jsonrpc/jsonrpc-error';
+import { JsonrpcResponseBody, validJsonrpcResponseBody, JsonrpcErrorMessage, JsonrpcErrorCode } from '../../src';
 
 describe('validJsonrpcResponseBody error', () => {
   const responseBody01 = undefined;

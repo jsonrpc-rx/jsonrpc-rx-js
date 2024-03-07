@@ -1,4 +1,4 @@
-import { Disposable } from '../../src/jsonrpc-rx/disposable';
+import { Disposable } from '../../src';
 import { it } from 'vitest';
 
 it('Disposable new', async ({ expect }) => {

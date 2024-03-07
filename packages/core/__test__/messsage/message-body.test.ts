@@ -1,6 +1,4 @@
-import { JsonrpcRequestBody } from '../../src/jsonrpc/jsonrpc-request-body';
-import { JsonrpcResponseBody } from '../../src/jsonrpc/jsonrpc-response-body';
-import { isJsonrpcRequestBody, isJsonrpcResponseBody } from '../../src/message/message-body';
+import { isJsonrpcRequestBody, isJsonrpcResponseBody, JsonrpcResponseBody, JsonrpcRequestBody } from '../../src';
 import { it } from 'vitest';
 
 it('isJsonrpcRequestBody', ({ expect }) => {

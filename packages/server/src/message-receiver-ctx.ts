@@ -9,7 +9,6 @@ import {
   JsonrpcRequestBody,
   isJsonrpcRequestBody,
   composeInterceptors,
-  RequestInterceptor,
   invokeAsPromise,
   JsonrpcResponseBody,
 } from '@cec/jsonrpc-core';
@@ -27,7 +26,7 @@ export class MessageReceiverCtx {
 
       if (this.baseConfig?.requestInterceptors) {
         try {
-          const interceptor = composeInterceptors<RequestInterceptor>(this.baseConfig.requestInterceptors);
+          const interceptor = composeInterceptors<JsonrpcRequestBody>(this.baseConfig.requestInterceptors);
           messageBody = (await invokeAsPromise(interceptor, messageBody)) as JsonrpcRequestBody;
         } catch (data) {
           messageBody = {

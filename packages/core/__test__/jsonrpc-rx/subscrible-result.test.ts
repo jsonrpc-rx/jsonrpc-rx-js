@@ -1,4 +1,4 @@
-import { SubscribleResult, SubscribleResultSatate, isSubscribleResult } from '../../src/jsonrpc-rx/subscrible-result';
+import { SubscribleResult, SubscribleResultSatate, isSubscribleResult } from '../../src';
 import { describe, it } from 'vitest';
 
 describe('isSubscribleResult normal', async () => {
@@ -128,7 +128,6 @@ describe('isSubscribleResult error', async () => {
   };
 
   const subscribleResult11: any = undefined;
-
 
   it('isSubscribleResult error 01', ({ expect }) => expect(isSubscribleResult(subscribleResult01)).toBeFalsy());
   it('isSubscribleResult error 02', ({ expect }) => expect(isSubscribleResult(subscribleResult02)).toBeFalsy());

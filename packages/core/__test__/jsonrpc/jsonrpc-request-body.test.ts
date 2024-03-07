@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest';
-import { isJsonrpcRequestBodyParams, validJsonrpcResquestBody } from '../../src/jsonrpc/jsonrpc-request-body';
+import { isJsonrpcRequestBodyParams, validJsonrpcResquestBody } from '../../src';
 
 describe('isJsonrpcRequestBodyParams', async () => {
   const isParams01 = isJsonrpcRequestBodyParams({});

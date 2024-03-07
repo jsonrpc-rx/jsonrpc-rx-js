@@ -1,4 +1,4 @@
-import { invokeAsPromise } from '../../src/util/invoke-as-promise';
+import { invokeAsPromise } from '../../src';
 import { describe, it } from 'vitest';
 
 describe('invokeAsPromise', () => {
