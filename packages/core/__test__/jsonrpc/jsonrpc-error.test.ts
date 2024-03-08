@@ -1,4 +1,4 @@
-import { JsonrpcErrorMessage, JsonrpcError, JsonrpcErrorCode, validJsonrpcError } from '../../src';
+import { JsonrpcErrorMessage, JsonrpcError, JsonrpcErrorCode, validJsonrpcError, CostomJsonrpcError } from '../../src';
 import { describe, it } from 'vitest';
 
 describe('isJsonrpcBaseConfig normal', async () => {
@@ -42,4 +42,17 @@ describe('isJsonrpcBaseConfig error', () => {
   it('isJsonrpcBaseConfig error 01', async ({ expect }) => expect(isValidMessage01).toBeTruthy());
   it('isJsonrpcBaseConfig error 02', async ({ expect }) => expect(isValidMessage02).toBeTruthy());
   it('isJsonrpcBaseConfig error 03', async ({ expect }) => expect(isValidMessage03).toBeTruthy());
+});
+
+it('CostomJsonrpcError', async ({ expect }) => {
+  const jsonrpcError = {
+    code: JsonrpcErrorCode.InternalError,
+    message: JsonrpcErrorMessage.InternalError,
+    data: 'Original error message',
+  };
+  const error = new CostomJsonrpcError(jsonrpcError, 'it is a test error');
+  
+  const name = `[${jsonrpcError.code}]${jsonrpcError.message}`;
+  
+  expect(error.name).toEqual(name);
 });

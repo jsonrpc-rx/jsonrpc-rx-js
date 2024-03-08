@@ -20,11 +20,11 @@ export enum JsonrpcErrorMessage {
   ServerError = 'Server error',
 }
 
-export type JsonrpcError = {
+export interface JsonrpcError {
   code: JsonrpcErrorCode;
   message: string;
   data?: any;
-};
+}
 
 export function validJsonrpcError(jsonrpcError: any) {
   const { code, message } = jsonrpcError ?? {};
@@ -49,4 +49,18 @@ export function validJsonrpcError(jsonrpcError: any) {
   }
 
   return validResult;
+}
+
+export class CostomJsonrpcError extends Error {
+  constructor(jsonrpcError: JsonrpcError, reason?: string) {
+    let message = '';
+    if (reason) {
+      message = reason + message;
+    }
+    if (jsonrpcError.data) {
+      message += '\r\n' + jsonrpcError.data;
+    }
+    super(message);
+    this.name = `[${jsonrpcError.code}]${jsonrpcError.message}`;
+  }
 }

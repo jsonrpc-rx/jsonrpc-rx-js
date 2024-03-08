@@ -1,14 +1,14 @@
+import { JsonrpcParams } from 'src/jsonrpc/jsonrpc-params';
 import { Dispose, IDisposable } from './disposable';
 
-// TODO 如何防止 complete 被重复调用，和实现 complete 被调用后的“idle”的能力
-export interface Publisher {
-  next: (value: any) => void;
+export interface Publisher<Value = any> {
+  next: (value: Value) => void;
   error: (error: any) => void;
   complete: () => void;
 }
 
-export interface SubscribeHandler {
-  (publisher: Publisher, params?: any[] | object): Dispose;
+export interface SubscribeHandler<Params extends JsonrpcParams, PublishValue = any> {
+  (publisher: Publisher<PublishValue>, params?: Params): Dispose;
 }
 
 export interface ParamsSubject {
@@ -17,7 +17,10 @@ export interface ParamsSubject {
    * @param subjectName 主题名称
    * @param subscribeHandler 订阅的逻辑处理（主题的逻辑）
    */
-  onSubscribe(subjectName: string, subscribeHandler: SubscribeHandler): IDisposable;
+  onSubscribe<Params extends JsonrpcParams, PublishValue = any>(
+    subjectName: string,
+    subscribeHandler: SubscribeHandler<Params, PublishValue>,
+  ): IDisposable;
 }
 
 /**

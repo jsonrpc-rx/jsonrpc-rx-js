@@ -1,7 +1,7 @@
 export { IJsonrpcServer } from './jsonrpc/jsonrpc-server';
 export { IJsonrpcClient } from './jsonrpc/jsonrpc-client';
 export { JsonrpcEnd } from './jsonrpc/jsonrpc-end';
-export { JsonrpcErrorCode, JsonrpcErrorMessage, JsonrpcError, validJsonrpcError } from './jsonrpc/jsonrpc-error';
+export { JsonrpcErrorCode, JsonrpcErrorMessage, JsonrpcError, validJsonrpcError, CostomJsonrpcError } from './jsonrpc/jsonrpc-error';
 export { JsonrpcRequestBody, validJsonrpcResquestBody, isJsonrpcRequestBodyParams } from './jsonrpc/jsonrpc-request-body';
 export { JsonrpcResponseBody, validJsonrpcResponseBody } from './jsonrpc/jsonrpc-response-body';
 export {
@@ -12,6 +12,7 @@ export {
   composeInterceptors,
   composeAsPromise,
 } from './jsonrpc/jsonrpc-base-config';
+export { JsonrpcParams, isJsonrpcParams } from './jsonrpc/jsonrpc-params';
 
 export { MessageBody, isJsonrpcRequestBody, isJsonrpcResponseBody } from './message/message-body';
 export { MessageHandler, MessageReceiver } from './message/message-receiver';

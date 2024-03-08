@@ -1,3 +1,4 @@
+import { JsonrpcParams } from 'src/jsonrpc/jsonrpc-params';
 import { toType } from '../util/to-type';
 import { IDisposable } from './disposable';
 
@@ -13,7 +14,7 @@ export interface ParamsSubscribable {
    * @param method 订阅名称
    * @param params 订阅参数
    */
-  subscribe(subjectName: string, observer: Observer, params?: any[] | object): IDisposable;
+  subscribe<NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): IDisposable;
 }
 
 export function isObserver(observer: Observer): boolean {

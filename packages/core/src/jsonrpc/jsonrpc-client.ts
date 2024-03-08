@@ -1,4 +1,5 @@
 import { ParamsSubscribable } from '../jsonrpc-rx/params-subscribable';
+import { JsonrpcParams } from './jsonrpc-params';
 
 export interface IJsonrpcClient extends ParamsSubscribable {
   /**
@@ -7,12 +8,12 @@ export interface IJsonrpcClient extends ParamsSubscribable {
    * @param params 方法参数
    * @returns 调用结果 (Promise)
    */
-  call: <ReplyType = any>(method: string, params: any[] | object) => Promise<ReplyType>;
+  call: <ReplyValue>(method: string, params: JsonrpcParams) => Promise<ReplyValue>;
 
   /**
    * 通知
    * @param notifyName 通知名称
    * @param params 通知参数
    */
-  notify: (notifyName: string, params: any[] | object) => void;
+  notify: (notifyName: string, params: JsonrpcParams) => void;
 }

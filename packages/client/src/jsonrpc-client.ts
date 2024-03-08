@@ -25,6 +25,7 @@ import {
   toType,
   uuid,
   Observer,
+  JsonrpcParams,
 } from '@cec/jsonrpc-core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -59,19 +60,21 @@ export class JsonrpcClient implements IJsonrpcClient {
     private msgReceiver: MessageReceiver,
     private jsonrpcClientConfig?: JsonrpcClientConfig,
   ) {
-    if (!(toType(msgSender) === 'function' && toType(msgReceiver) === 'function' && !this.isJsonrpcClientConfig(jsonrpcClientConfig!)))
+    const isJsonrpcClientConfig =
+      toType(msgSender) === 'function' && toType(msgReceiver) === 'function' && this.isJsonrpcClientConfig(jsonrpcClientConfig!);
+    if (!isJsonrpcClientConfig) {
       this.throwParamsInvalidError();
+    }
 
-    this.msgSenderCtx = new MessageSenderCtx(this.msgSender);
-    this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver);
+    this.msgSenderCtx = new MessageSenderCtx(this.msgSender, this.jsonrpcClientConfig);
+    this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, this.jsonrpcClientConfig);
     this.receiveMessage();
   }
-
-  call = <ReplyType = any>(method: string, params?: any[] | object) => {
+  call = <ReplyValue>(method: string, params: JsonrpcParams): Promise<ReplyValue> => {
     if (!(toType(method) === 'string' && isJsonrpcRequestBodyParams(params))) this.throwParamsInvalidError();
 
     const id = uuid();
-    const { reject, resolve, promise } = new Deferred<ReplyType>();
+    const { reject, resolve, promise } = new Deferred<ReplyValue>();
     const delayTime = this.jsonrpcClientConfig?.timeout ?? JsonrpcClient.TIMEOUT_DEFAULT;
 
     const timer = setTimeout(() => {
@@ -94,14 +97,14 @@ export class JsonrpcClient implements IJsonrpcClient {
     return promise;
   };
 
-  notify = (notifyName: string, params?: any[] | object) => {
+  notify = (notifyName: string, params: JsonrpcParams) => {
     if (!(toType(notifyName) === 'string' && isJsonrpcRequestBodyParams(params))) this.throwParamsInvalidError();
 
     const requestBody: JsonrpcRequestBody = { jsonrpc: '2.0', method: notifyName, params };
     this.msgSenderCtx.send(requestBody)!;
   };
 
-  subscribe(subjectName: string, observer: Observer<any>, params?: any[] | object): IDisposable {
+  subscribe<NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): IDisposable {
     if (!(toType(subjectName) === 'string' && isObserver(observer) && isJsonrpcRequestBodyParams(params))) this.throwParamsInvalidError();
 
     let subscribeDispose: Dispose = () => {};
@@ -113,7 +116,6 @@ export class JsonrpcClient implements IJsonrpcClient {
         };
         throw new Error(internalError.toString());
       }
-
       if (this.subscribeObserverMap.has(subjectName)) {
         this.subscribeObserverMap.get(subjectName)?.observers.set(subscribeId, observer);
       } else {
@@ -130,7 +132,6 @@ export class JsonrpcClient implements IJsonrpcClient {
         this.call(forSubscribleCancel, [subscribeId]);
       };
     };
-
     const forSubscrible = subjectName + FOR_SUBSCRIBLE_SUFFIX;
     this.call<string | number>(forSubscrible, params).then(toSubscribe);
 

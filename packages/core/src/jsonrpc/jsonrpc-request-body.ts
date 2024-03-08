@@ -1,9 +1,10 @@
 import { toType } from '../util/to-type';
+import { JsonrpcParams, isJsonrpcParams } from './jsonrpc-params';
 
 export interface JsonrpcRequestBody {
   jsonrpc: '2.0';
   method: string;
-  params?: object | any[];
+  params?: JsonrpcParams;
   id?: string | number;
 }
 
@@ -23,7 +24,7 @@ export function validJsonrpcResquestBody(resquestBody: any) {
   } else if (toType(method) != 'string') {
     validResult.validMessage = 'The request method for the rpc call MUST be String';
     validResult.isValid = false;
-  } else if (!(toType(params) === 'object' || toType(params) === 'array' || params == null)) {
+  } else if (!isJsonrpcParams(params)) {
     validResult.validMessage = 'The request parameters for the rpc call MUST contain a Object, Array, or NULL';
     validResult.isValid = false;
   }
