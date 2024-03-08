@@ -25,6 +25,8 @@ import {
   Publisher,
   ensurePublisher,
   validJsonrpcError,
+  JsonrpcParams,
+  JsonrpcBaseConfig,
 } from '@cec/jsonrpc-core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -42,13 +44,13 @@ export class JsonrpcServer implements IJsonrpcServer {
   constructor(
     private msgSender: MessageSender,
     private msgReceiver: MessageReceiver,
+    private jsonrpcBaseConfig?: JsonrpcBaseConfig,
   ) {
-    this.msgSenderCtx = new MessageSenderCtx(this.msgSender);
-    this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver);
+    this.msgSenderCtx = new MessageSenderCtx(this.msgSender, this.jsonrpcBaseConfig);
+    this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, this.jsonrpcBaseConfig);
     this.receiveMessage();
   }
-
-  onCall = (method: string, callHandler: (params: any[] | object) => any): IDisposable => {
+  onCall = <Params extends JsonrpcParams>(method: string, callHandler: (params: Params) => any): IDisposable => {
     if (!(toType(method) === 'string' && toType(callHandler) === 'function')) this.throwParamsInvalidError();
 
     if (this.callHandlerMap.has(method)) this.throwParamsRepeatedError(`the method ${method} is repeated`);
@@ -56,8 +58,7 @@ export class JsonrpcServer implements IJsonrpcServer {
 
     return new Disposable(() => this.callHandlerMap.delete(method));
   };
-
-  onNotify = (notifyName: string, notifyHandler: (params: any[] | object) => void): IDisposable => {
+  onNotify = <Params extends JsonrpcParams>(notifyName: string, notifyHandler: (params: Params) => void): IDisposable => {
     if (!(toType(notifyName) === 'string' && toType(notifyHandler) === 'function')) this.throwParamsInvalidError();
 
     if (this.callHandlerMap.has(notifyName)) this.throwParamsRepeatedError(`the notify ${notifyName} is repeated`);
@@ -65,8 +66,10 @@ export class JsonrpcServer implements IJsonrpcServer {
 
     return new Disposable(() => this.notifyHandlerMap.delete(notifyName));
   };
-
-  onSubscribe(subjectName: string, subscribeHandler: SubscribeHandler): IDisposable {
+  onSubscribe<Params extends JsonrpcParams, PublishValue = any>(
+    subjectName: string,
+    subscribeHandler: SubscribeHandler<Params, PublishValue>,
+  ): IDisposable {
     if (!(toType(subjectName) === 'string' && toType(subscribeHandler) === 'function')) this.throwParamsInvalidError();
 
     if (this.onSubscribeSubjectSet.has(subjectName)) this.throwParamsRepeatedError(`the subject ${subjectName} is repeated`);
@@ -80,7 +83,7 @@ export class JsonrpcServer implements IJsonrpcServer {
     let subscribleErrorCacheTimer: any = -1;
     let subscribleCompleteCacheTimer: any = -1;
 
-    const subscribleCallHandler = (params: any[] | object) => {
+    const subscribleCallHandler = (params: JsonrpcParams) => {
       const subscribeId = uuid();
 
       const sendJsonrpcResponseBody = (result: Pick<SubscribleResult, 'state' | 'data' | 'error'>) => {
@@ -123,7 +126,7 @@ export class JsonrpcServer implements IJsonrpcServer {
         },
       });
 
-      const dispose: Dispose = subscribeHandler.call({}, publisher, params);
+      const dispose: Dispose = (subscribeHandler as SubscribeHandler<JsonrpcParams>).call({}, publisher, params);
       onSubscribeCancelMap.set(subscribeId, dispose);
 
       return subscribeId;
@@ -131,7 +134,7 @@ export class JsonrpcServer implements IJsonrpcServer {
     const forSubscrible = subjectName + FOR_SUBSCRIBLE_SUFFIX;
     const forSubscribleDisposable = this.onCall(forSubscrible, subscribleCallHandler);
 
-    const subscribleCancelCallHandler = (params: any[] | object) => {
+    const subscribleCancelCallHandler = (params: JsonrpcParams) => {
       const [subscribeId] = params as [string | number];
       const dispose = onSubscribeCancelMap.get(subscribeId);
       if (dispose) {

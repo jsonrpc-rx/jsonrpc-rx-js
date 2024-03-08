@@ -84,6 +84,15 @@ importers:
         specifier: ^3.2.9
         version: 3.2.9
 
+  packages/integration-test:
+    dependencies:
+      '@cec/jsonrpc-client':
+        specifier: workspace:^
+        version: link:../client
+      '@cec/jsonrpc-server':
+        specifier: workspace:^
+        version: link:../server
+
   packages/server:
     dependencies:
       '@cec/jsonrpc-core':
@@ -92,8 +101,6 @@ importers:
       flatted:
         specifier: ^3.2.9
         version: 3.2.9
-
-  packages/server-decorator: {}
 
 packages:
 

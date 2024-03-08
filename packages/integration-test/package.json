@@ -1,0 +1,22 @@
+{
+  "name": "@cec/integration-test",
+  "version": "0.0.1",
+  "author": "cross-end-call",
+  "description": "The integration test of server and client",
+  "keywords": [],
+  "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cross-end-call/jsonrpc-cec.git"
+  },
+  "scripts": {
+    "clean": "rimraf node_modules/"
+  },
+  "dependencies": {
+    "@cec/jsonrpc-client": "workspace:^",
+    "@cec/jsonrpc-server": "workspace:^"
+  }
+}
