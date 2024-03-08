@@ -19,7 +19,7 @@
     "url": "git+ssh://git@github.com/cross-end-call/jsonrpc-cec.git"
   },
   "scripts": {
-    "test": "jest --coverage",
+    "test": "vitest",
     "build": "rimraf dist/ && run-p build:esm build:cjs build:dts",
     "build:esm": "rollup -c --environment NODE_ENV:esm",
     "build:cjs": "rollup -c --environment NODE_ENV:cjs",

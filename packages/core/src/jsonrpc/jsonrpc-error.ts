@@ -16,7 +16,7 @@ export enum JsonrpcErrorMessage {
   InvalidRequest = 'Invalid request',
   MethodNotFound = 'Method not found',
   InvalidParams = 'Invalid params',
-  InternalError = '	Internal error',
+  InternalError = 'Internal error',
   ServerError = 'Server error',
 }
 

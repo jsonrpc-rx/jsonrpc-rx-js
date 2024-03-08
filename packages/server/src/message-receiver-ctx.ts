@@ -24,7 +24,7 @@ export class MessageReceiverCtx {
       let messageBody = parseMessage(message) as MessageBody; // 这一步发生错误的话，错误暂时不处理
       if (!isJsonrpcRequestBody(messageBody)) return;
 
-      if (this.baseConfig?.requestInterceptors) {
+      if (this.baseConfig?.requestInterceptors?.length) {
         try {
           const interceptor = composeInterceptors<JsonrpcRequestBody>(this.baseConfig.requestInterceptors);
           messageBody = (await invokeAsPromise(interceptor, messageBody)) as JsonrpcRequestBody;
@@ -41,6 +41,7 @@ export class MessageReceiverCtx {
         }
       }
 
+      if (messageBody == null) return;
       receiveHandler.call({}, messageBody);
     };
     return this.messageReceiver.call({}, messageHandler);

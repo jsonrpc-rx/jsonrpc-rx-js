@@ -4,7 +4,7 @@ import { JsonrpcResponseBody } from './jsonrpc-response-body';
 import { invokeAsPromise } from '../util/invoke-as-promise';
 
 export interface Interceptor<T extends JsonrpcRequestBody | JsonrpcResponseBody> {
-  (messageBody: T): Promise<T> | T;
+  (messageBody: T): Promise<T> | T | void;
 }
 
 export interface RequestInterceptor extends Interceptor<JsonrpcRequestBody> {}

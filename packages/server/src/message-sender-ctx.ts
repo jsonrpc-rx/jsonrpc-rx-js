@@ -1,6 +1,5 @@
 import { stringify } from 'flatted';
 import {
-  MessageBody,
   JsonrpcErrorMessage,
   JsonrpcErrorCode,
   MessageSender,
@@ -18,7 +17,7 @@ export class MessageSenderCtx {
 
   send = async (responseBody: JsonrpcResponseBody) => {
     let filteredResponseBody = responseBody;
-    if (this.baseConfig?.responseInterceptors) {
+    if (this.baseConfig?.responseInterceptors?.length) {
       try {
         const interceptor = composeInterceptors<JsonrpcResponseBody>(this.baseConfig?.responseInterceptors);
         filteredResponseBody = await invokeAsPromise(interceptor, responseBody);
@@ -35,31 +34,22 @@ export class MessageSenderCtx {
       }
     }
 
+    if (filteredResponseBody == null) return;
     let message: string;
     try {
-      message = stringifyMessageBody(filteredResponseBody);
+      message = stringify(filteredResponseBody);
     } catch (error) {
       const errorResponseBody: JsonrpcResponseBody = {
-        ...filteredResponseBody,
-        result: undefined,
-        error: error,
+        jsonrpc: '2.0',
+        id: filteredResponseBody.id,
+        error: {
+          code: JsonrpcErrorCode.ServerError,
+          message: JsonrpcErrorMessage.ServerError + ': ' + 'stringify error in server end',
+          data: JSON.stringify(error),
+        },
       };
-      message = stringifyMessageBody(errorResponseBody);
+      message = stringify(errorResponseBody);
     }
-
     this.messageSender.call({}, message);
   };
-}
-
-function stringifyMessageBody(messageBody: MessageBody): string {
-  try {
-    return stringify(messageBody) as string;
-  } catch (error) {
-    const serverError = {
-      code: JsonrpcErrorCode.ServerError,
-      message: JsonrpcErrorMessage.ServerError + ': ' + 'stringify error in server end',
-      data: error,
-    };
-    throw new Error(serverError.toString());
-  }
 }

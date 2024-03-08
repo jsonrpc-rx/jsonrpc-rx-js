@@ -5,7 +5,6 @@ import {
   MessageBody,
   JsonrpcErrorMessage,
   JsonrpcErrorCode,
-  ResponseInterceptor,
   composeInterceptors,
   invokeAsPromise,
   JsonrpcResponseBody,
@@ -21,11 +20,10 @@ export class MessageReceiverCtx {
 
   receive = (receiveHandler: (message: MessageBody) => void) => {
     const messageHandler: MessageHandler = async (message: string) => {
-     
       let responseBody = parseMessage(message) as JsonrpcResponseBody; // 这一步发生错误的话，错误就不能和传递给 call 方法。所以这里的错误暂时不处理
       if (!isJsonrpcResponseBody(responseBody)) return;
 
-      if (this.baseConfig?.responseInterceptors) {
+      if (this.baseConfig?.responseInterceptors?.length) {
         try {
           const interceptor = composeInterceptors<JsonrpcResponseBody>(this.baseConfig.responseInterceptors!);
           responseBody = await invokeAsPromise(interceptor, responseBody);
@@ -42,6 +40,7 @@ export class MessageReceiverCtx {
         }
       }
 
+      if (responseBody == null) return;
       receiveHandler.call({}, responseBody);
     };
     return this.messageReceiver.call({}, messageHandler);

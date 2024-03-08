@@ -6,7 +6,6 @@ import {
   MessageSender,
   JsonrpcBaseConfig,
   composeInterceptors,
-  RequestInterceptor,
   JsonrpcRequestBody,
   invokeAsPromise,
 } from '@cec/jsonrpc-core';
@@ -17,10 +16,10 @@ export class MessageSenderCtx {
     private baseConfig?: JsonrpcBaseConfig,
   ) {}
 
-  send = async (messageBody: JsonrpcRequestBody) => {
-    let requestBody: JsonrpcRequestBody;
+  send = async (messageBody: MessageBody) => {
+    let requestBody = messageBody as JsonrpcRequestBody;
 
-    if (this.baseConfig?.requestInterceptors) {
+    if (this.baseConfig?.requestInterceptors?.length) {
       try {
         const interceptor = composeInterceptors<JsonrpcRequestBody>(this.baseConfig?.requestInterceptors);
         requestBody = await invokeAsPromise(interceptor, messageBody);
@@ -30,9 +29,11 @@ export class MessageSenderCtx {
           message: JsonrpcErrorMessage.InternalError + ': ' + 'the request interceptors throw error',
           data: error,
         };
-        throw new Error(internalError.toString());
+        throw new Error(JSON.stringify(internalError));
       }
     }
+
+    if (requestBody == null) return;
     const message = stringifyMessageBody(requestBody!);
     this.messageSender.call({}, message);
   };
@@ -47,6 +48,6 @@ function stringifyMessageBody(messageBody: MessageBody): string {
       message: JsonrpcErrorMessage.InvalidRequest,
       data: error,
     };
-    throw new Error(invalidRequest.toString());
+    throw new Error(JSON.stringify(invalidRequest));
   }
 }

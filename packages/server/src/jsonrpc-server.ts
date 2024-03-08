@@ -32,8 +32,8 @@ import { MessageReceiverCtx } from './message-receiver-ctx';
 export class JsonrpcServer implements IJsonrpcServer {
   static SUBSCRIBLE_RESULT_CACHE_MILLIS = 32;
 
-  private callHandlerMap = new Map<string, (args: any[]) => any>();
-  private notifyHandlerMap = new Map<string, (args: any[]) => void>();
+  private callHandlerMap = new Map<string, (args: any) => any>();
+  private notifyHandlerMap = new Map<string, (args: any) => void>();
   private onSubscribeSubjectSet = new Set<string>();
 
   private msgSenderCtx: MessageSenderCtx;
