@@ -8,6 +8,7 @@ import {
   composeInterceptors,
   JsonrpcRequestBody,
   invokeAsPromise,
+  JsonrpcCostomError,
 } from '@cec/jsonrpc-core';
 
 export class MessageSenderCtx {
@@ -23,13 +24,13 @@ export class MessageSenderCtx {
       try {
         const interceptor = composeInterceptors<JsonrpcRequestBody>(this.baseConfig?.requestInterceptors);
         requestBody = await invokeAsPromise(interceptor, messageBody);
-      } catch (error) {
+      } catch (error: any) {
         const internalError = {
           code: JsonrpcErrorCode.InternalError,
-          message: JsonrpcErrorMessage.InternalError + ': ' + 'the request interceptors throw error',
-          data: error,
+          message: 'the request interceptors throw error',
+          data: error.toString(),
         };
-        throw new Error(JSON.stringify(internalError));
+        throw new JsonrpcCostomError(internalError);
       }
     }
 
@@ -42,12 +43,12 @@ export class MessageSenderCtx {
 function stringifyMessageBody(messageBody: MessageBody): string {
   try {
     return stringify(messageBody) as string;
-  } catch (error) {
+  } catch (error: any) {
     const invalidRequest = {
       code: JsonrpcErrorCode.InvalidRequest,
-      message: JsonrpcErrorMessage.InvalidRequest,
-      data: error,
+      message: 'stringify error in client end',
+      data: error.toString(),
     };
-    throw new Error(JSON.stringify(invalidRequest));
+    throw new JsonrpcCostomError(invalidRequest);
   }
 }

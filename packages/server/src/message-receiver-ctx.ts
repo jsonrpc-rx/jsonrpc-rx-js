@@ -3,7 +3,6 @@ import {
   MessageHandler,
   MessageReceiver,
   MessageBody,
-  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   JsonrpcBaseConfig,
   JsonrpcRequestBody,
@@ -21,21 +20,21 @@ export class MessageReceiverCtx {
 
   receive = (receiveHandler: (messageBody: MessageBody) => void) => {
     const messageHandler: MessageHandler = async (message: string) => {
-      let messageBody = parseMessage(message) as MessageBody; // 这一步发生错误的话，错误暂时不处理
+      let messageBody = parse(message) as MessageBody; // 这一步发生错误的话，错误暂时不处理: 如果解析错误，那么就没有办法将错误向任何一端传递
       if (!isJsonrpcRequestBody(messageBody)) return;
 
       if (this.baseConfig?.requestInterceptors?.length) {
         try {
           const interceptor = composeInterceptors<JsonrpcRequestBody>(this.baseConfig.requestInterceptors);
           messageBody = (await invokeAsPromise(interceptor, messageBody)) as JsonrpcRequestBody;
-        } catch (data) {
+        } catch (error: any) {
           messageBody = {
             id: messageBody.id,
             jsonrpc: '2.0',
             error: {
               code: JsonrpcErrorCode.ServerError,
-              message: JsonrpcErrorMessage.ServerError + ': ' + 'the request interceptors throw error in server end',
-              data,
+              message: 'the request interceptors throw error in server end',
+              data: error.toString(),
             },
           } as JsonrpcResponseBody;
         }
@@ -46,17 +45,4 @@ export class MessageReceiverCtx {
     };
     return this.messageReceiver.call({}, messageHandler);
   };
-}
-
-function parseMessage(message: string): MessageBody {
-  try {
-    return parse(message) as MessageBody;
-  } catch (error) {
-    const parseError = {
-      code: JsonrpcErrorCode.ParseError,
-      message: JsonrpcErrorMessage.ParseError,
-      data: error,
-    };
-    throw new Error(parseError.toString());
-  }
 }

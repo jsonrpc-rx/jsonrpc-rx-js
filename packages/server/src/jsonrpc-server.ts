@@ -27,6 +27,7 @@ import {
   validJsonrpcError,
   JsonrpcParams,
   JsonrpcBaseConfig,
+  JsonrpcCostomError,
 } from '@cec/jsonrpc-core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -51,17 +52,17 @@ export class JsonrpcServer implements IJsonrpcServer {
     this.receiveMessage();
   }
   onCall = <Params extends JsonrpcParams>(method: string, callHandler: (params: Params) => any): IDisposable => {
-    if (!(toType(method) === 'string' && toType(callHandler) === 'function')) this.throwParamsInvalidError();
+    if (!(toType(method) === 'string' && toType(callHandler) === 'function')) this.throwParamsInternalError('the parameters invalid');
 
-    if (this.callHandlerMap.has(method)) this.throwParamsRepeatedError(`the method ${method} is repeated`);
+    if (this.callHandlerMap.has(method)) this.throwParamsInternalError(`the method ${method} is repeated`);
     this.callHandlerMap.set(method, callHandler);
 
     return new Disposable(() => this.callHandlerMap.delete(method));
   };
   onNotify = <Params extends JsonrpcParams>(notifyName: string, notifyHandler: (params: Params) => void): IDisposable => {
-    if (!(toType(notifyName) === 'string' && toType(notifyHandler) === 'function')) this.throwParamsInvalidError();
+    if (!(toType(notifyName) === 'string' && toType(notifyHandler) === 'function')) this.throwParamsInternalError('the parameters invalid');
 
-    if (this.callHandlerMap.has(notifyName)) this.throwParamsRepeatedError(`the notify ${notifyName} is repeated`);
+    if (this.callHandlerMap.has(notifyName)) this.throwParamsInternalError(`the notify ${notifyName} is repeated`);
     this.notifyHandlerMap.set(notifyName, notifyHandler);
 
     return new Disposable(() => this.notifyHandlerMap.delete(notifyName));
@@ -70,9 +71,10 @@ export class JsonrpcServer implements IJsonrpcServer {
     subjectName: string,
     subscribeHandler: SubscribeHandler<Params, PublishValue>,
   ): IDisposable {
-    if (!(toType(subjectName) === 'string' && toType(subscribeHandler) === 'function')) this.throwParamsInvalidError();
+    if (!(toType(subjectName) === 'string' && toType(subscribeHandler) === 'function'))
+      this.throwParamsInternalError('the parameters invalid');
 
-    if (this.onSubscribeSubjectSet.has(subjectName)) this.throwParamsRepeatedError(`the subject ${subjectName} is repeated`);
+    if (this.onSubscribeSubjectSet.has(subjectName)) this.throwParamsInternalError(`the subject ${subjectName} is repeated`);
     this.onSubscribeSubjectSet.add(subjectName);
 
     const onSubscribeCancelMap: Map<string | number, Dispose> = new Map();
@@ -134,7 +136,7 @@ export class JsonrpcServer implements IJsonrpcServer {
     const forSubscrible = subjectName + FOR_SUBSCRIBLE_SUFFIX;
     const forSubscribleDisposable = this.onCall(forSubscrible, subscribleCallHandler);
 
-    const subscribleCancelCallHandler = (params: JsonrpcParams) => {
+    const subscribleCancelNotifyHandler = (params: JsonrpcParams) => {
       const [subscribeId] = params as [string | number];
       const dispose = onSubscribeCancelMap.get(subscribeId);
       if (dispose) {
@@ -143,7 +145,7 @@ export class JsonrpcServer implements IJsonrpcServer {
       }
     };
     const forSubscribleCancel = subjectName + FOR_SUBSCRIBLE_CANCEL_SUFFIX;
-    const forSubscribleCancelDisposable = this.onCall(forSubscribleCancel, subscribleCancelCallHandler);
+    const forSubscribleCancelDisposable = this.onNotify(forSubscribleCancel, subscribleCancelNotifyHandler);
 
     return Disposable.from(
       forSubscribleDisposable.dispose,
@@ -163,7 +165,7 @@ export class JsonrpcServer implements IJsonrpcServer {
       this.receiveMessageForOnCall(messageBody as JsonrpcRequestBody);
       this.receiveMessageForOnNotify(messageBody as JsonrpcRequestBody);
     };
-    this.msgReceiverCtx.receive(receiveHandler); // TODO: 错误处理————给 client 返回错误
+    this.msgReceiverCtx.receive(receiveHandler);
   }
 
   private receiveMessageForOnCall(requestBody: JsonrpcRequestBody) {
@@ -177,7 +179,7 @@ export class JsonrpcServer implements IJsonrpcServer {
         jsonrpc: '2.0',
         error: {
           code: JsonrpcErrorCode.MethodNotFound,
-          message: JsonrpcErrorMessage.MethodNotFound + ': ' + `the method [${method}] not found`,
+          message: `the method [${method}] not found`,
         },
       };
       this.msgSenderCtx.send(responseBody);
@@ -189,11 +191,11 @@ export class JsonrpcServer implements IJsonrpcServer {
     invokeResult
       .then((res: any) => (responseBody.result = res))
       .catch(
-        (err: Error) =>
+        (error) =>
           (responseBody.error = {
             code: JsonrpcErrorCode.ServerError,
-            message: JsonrpcErrorMessage.ServerError,
-            data: err,
+            message: 'the call handler throw error',
+            data: error.toString(),
           }),
       )
       .finally(() => {
@@ -213,19 +215,11 @@ export class JsonrpcServer implements IJsonrpcServer {
     }
   }
 
-  private throwParamsInvalidError() {
+  private throwParamsInternalError(message: string) {
     const internalError = {
       code: JsonrpcErrorCode.InternalError,
-      message: JsonrpcErrorMessage.InternalError + ': ' + 'the parameters invalid',
+      message,
     };
-    throw new Error(internalError.toString());
-  }
-
-  private throwParamsRepeatedError(additionMessage: string) {
-    const internalError = {
-      code: JsonrpcErrorCode.InternalError,
-      message: JsonrpcErrorMessage.InternalError + ': ' + additionMessage,
-    };
-    throw new Error(internalError.toString());
+    throw new JsonrpcCostomError(internalError);
   }
 }

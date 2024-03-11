@@ -26,6 +26,7 @@ import {
   uuid,
   Observer,
   JsonrpcParams,
+  JsonrpcCostomError,
 } from '@cec/jsonrpc-core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -80,9 +81,9 @@ export class JsonrpcClient implements IJsonrpcClient {
     const timer = setTimeout(() => {
       const jsonrpcError: JsonrpcError = {
         code: JsonrpcErrorCode.InternalError,
-        message: JsonrpcErrorMessage + ': ' + `the method ${method} has called failed, reason: timeout`,
+        message: `the method ${method} has called failed, reason: timeout`,
       };
-      reject(new Error(jsonrpcError.toString()));
+      reject(new JsonrpcCostomError(jsonrpcError));
     }, delayTime);
 
     const clearTimer = () => clearTimeout(timer);
@@ -90,7 +91,7 @@ export class JsonrpcClient implements IJsonrpcClient {
 
     const requestBody: JsonrpcRequestBody = { jsonrpc: '2.0', id, method, params };
     try {
-      this.msgSenderCtx.send(requestBody)!;
+      this.msgSenderCtx.send(requestBody);
     } catch (error) {
       reject(error);
     }
@@ -101,7 +102,7 @@ export class JsonrpcClient implements IJsonrpcClient {
     if (!(toType(notifyName) === 'string' && isJsonrpcRequestBodyParams(params))) this.throwParamsInvalidError();
 
     const requestBody: JsonrpcRequestBody = { jsonrpc: '2.0', method: notifyName, params };
-    this.msgSenderCtx.send(requestBody)!;
+    this.msgSenderCtx.send(requestBody);
   };
 
   subscribe<NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): IDisposable {
@@ -112,9 +113,9 @@ export class JsonrpcClient implements IJsonrpcClient {
       if (!(toType(subscribeId) === 'string' || toType(subscribeId) === 'number')) {
         const internalError = {
           code: JsonrpcErrorCode.InternalError,
-          message: JsonrpcErrorMessage.InternalError + ': ' + 'the subscribe-id of response is invalid when subscribing',
+          message: 'the subscribe-id of response is invalid when subscribing',
         };
-        throw new Error(internalError.toString());
+        throw new JsonrpcCostomError(internalError);
       }
       if (this.subscribeObserverMap.has(subjectName)) {
         this.subscribeObserverMap.get(subjectName)?.observers.set(subscribeId, observer);
@@ -129,7 +130,7 @@ export class JsonrpcClient implements IJsonrpcClient {
       subscribeDispose = () => {
         this.subscribeObserverMap.get(subjectName)?.observers.delete(subscribeId);
         const forSubscribleCancel = subjectName + FOR_SUBSCRIBLE_CANCEL_SUFFIX;
-        this.call(forSubscribleCancel, [subscribeId]);
+        this.notify(forSubscribleCancel, [subscribeId]);
       };
     };
     const forSubscrible = subjectName + FOR_SUBSCRIBLE_SUFFIX;
@@ -201,8 +202,8 @@ export class JsonrpcClient implements IJsonrpcClient {
   private throwParamsInvalidError() {
     const internalError = {
       code: JsonrpcErrorCode.InternalError,
-      message: JsonrpcErrorMessage.InternalError + ': ' + 'the parameters invalid',
+      message: 'the parameters invalid',
     };
-    throw new Error(internalError.toString());
+    throw new JsonrpcCostomError(internalError);
   }
 }

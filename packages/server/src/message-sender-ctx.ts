@@ -1,6 +1,5 @@
 import { stringify } from 'flatted';
 import {
-  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   MessageSender,
   JsonrpcBaseConfig,
@@ -21,14 +20,14 @@ export class MessageSenderCtx {
       try {
         const interceptor = composeInterceptors<JsonrpcResponseBody>(this.baseConfig?.responseInterceptors);
         filteredResponseBody = await invokeAsPromise(interceptor, responseBody);
-      } catch (error) {
+      } catch (error: any) {
         filteredResponseBody = {
           id: responseBody.id,
           jsonrpc: '2.0',
           error: {
             code: JsonrpcErrorCode.ServerError,
-            message: JsonrpcErrorMessage.ServerError + ': ' + 'the response interceptors throw error in server end',
-            data: error,
+            message: 'the response interceptors throw error in server end',
+            data: error.toString(),
           },
         };
       }
@@ -38,14 +37,14 @@ export class MessageSenderCtx {
     let message: string;
     try {
       message = stringify(filteredResponseBody);
-    } catch (error) {
+    } catch (error: any) {
       const errorResponseBody: JsonrpcResponseBody = {
         jsonrpc: '2.0',
         id: filteredResponseBody.id,
         error: {
           code: JsonrpcErrorCode.ServerError,
-          message: JsonrpcErrorMessage.ServerError + ': ' + 'stringify error in server end',
-          data: JSON.stringify(error),
+          message: 'stringify error in server end',
+          data: error.toString(),
         },
       };
       message = stringify(errorResponseBody);

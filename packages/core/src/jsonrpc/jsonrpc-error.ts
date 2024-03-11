@@ -51,16 +51,22 @@ export function validJsonrpcError(jsonrpcError: any) {
   return validResult;
 }
 
-export class CostomJsonrpcError extends Error {
-  constructor(jsonrpcError: JsonrpcError, reason?: string) {
-    let message = '';
-    if (reason) {
-      message = reason + message;
-    }
+export const jsonrpcErrorCodeMessageMap = {
+  [JsonrpcErrorCode.ParseError]: JsonrpcErrorMessage.ParseError,
+  [JsonrpcErrorCode.InvalidRequest]: JsonrpcErrorMessage.InvalidRequest,
+  [JsonrpcErrorCode.MethodNotFound]: JsonrpcErrorMessage.MethodNotFound,
+  [JsonrpcErrorCode.InvalidParams]: JsonrpcErrorMessage.InvalidParams,
+  [JsonrpcErrorCode.InternalError]: JsonrpcErrorMessage.InternalError,
+  [JsonrpcErrorCode.ServerError]: JsonrpcErrorMessage.ServerError,
+};
+
+export class JsonrpcCostomError extends Error {
+  constructor(jsonrpcError: JsonrpcError) {
+    let message = jsonrpcError.message;
     if (jsonrpcError.data) {
       message += '\r\n' + jsonrpcError.data;
     }
     super(message);
-    this.name = `[${jsonrpcError.code}]${jsonrpcError.message}`;
+    this.name = `[${jsonrpcError.code}]${jsonrpcErrorCodeMessageMap[jsonrpcError.code]}`;
   }
 }
