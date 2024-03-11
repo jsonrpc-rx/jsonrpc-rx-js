@@ -1,5 +1,4 @@
 import {
-  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   JsonrpcRequestBody,
   JsonrpcResponseBody,
@@ -195,7 +194,7 @@ export class JsonrpcServer implements IJsonrpcServer {
           (responseBody.error = {
             code: JsonrpcErrorCode.ServerError,
             message: 'the call handler throw error',
-            data: error.toString(),
+            data: error.stack ?? error.toString(),
           }),
       )
       .finally(() => {

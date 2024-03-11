@@ -64,7 +64,17 @@ export class JsonrpcCostomError extends Error {
   constructor(jsonrpcError: JsonrpcError) {
     let message = jsonrpcError.message;
     if (jsonrpcError.data) {
-      message += '\r\n' + jsonrpcError.data;
+      const maxLen = ((jsonrpcError.data.toString() as string) ?? '').split(/[\n]/).reduce((num, next) => Math.max(num, next.length), 0);
+      const divider = '='.repeat(maxLen);
+
+      message += `
+      \n
+      Origin Error Informtion:
+      ${divider} 
+      ${jsonrpcError.data}
+      ${divider} 
+      \n
+      `;
     }
     super(message);
     this.name = `[${jsonrpcError.code}]${jsonrpcErrorCodeMessageMap[jsonrpcError.code]}`;

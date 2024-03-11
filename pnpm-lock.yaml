@@ -77,6 +77,10 @@ importers:
       flatted:
         specifier: ^3.2.9
         version: 3.2.9
+    devDependencies:
+      '@cec/jsonrpc-server':
+        specifier: workspace:^
+        version: link:../server
 
   packages/core:
     dependencies:
@@ -101,6 +105,10 @@ importers:
       flatted:
         specifier: ^3.2.9
         version: 3.2.9
+    devDependencies:
+      '@cec/jsonrpc-client':
+        specifier: workspace:^
+        version: link:../client
 
 packages:
 

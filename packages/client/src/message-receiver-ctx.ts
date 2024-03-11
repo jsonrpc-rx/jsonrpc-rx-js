@@ -34,7 +34,7 @@ export class MessageReceiverCtx {
             error: {
               code: JsonrpcErrorCode.InternalError,
               message: 'the response interceptors throw error',
-              data: error.toString(),
+              data: error.stack ?? error.toString(),
             },
           };
         }

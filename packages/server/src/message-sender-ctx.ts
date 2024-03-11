@@ -27,7 +27,7 @@ export class MessageSenderCtx {
           error: {
             code: JsonrpcErrorCode.ServerError,
             message: 'the response interceptors throw error in server end',
-            data: error.toString(),
+            data: error.stack ?? error.toString(),
           },
         };
       }
@@ -44,7 +44,7 @@ export class MessageSenderCtx {
         error: {
           code: JsonrpcErrorCode.ServerError,
           message: 'stringify error in server end',
-          data: error.toString(),
+          data: error.stack ?? error.toString(),
         },
       };
       message = stringify(errorResponseBody);

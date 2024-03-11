@@ -1,5 +1,4 @@
 import {
-  JsonrpcErrorMessage,
   JsonrpcError,
   JsonrpcErrorCode,
   JsonrpcRequestBody,
@@ -71,6 +70,7 @@ export class JsonrpcClient implements IJsonrpcClient {
     this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, this.jsonrpcClientConfig);
     this.receiveMessage();
   }
+
   call = <ReplyValue>(method: string, params: JsonrpcParams): Promise<ReplyValue> => {
     if (!(toType(method) === 'string' && isJsonrpcRequestBodyParams(params))) this.throwParamsInvalidError();
 
@@ -160,7 +160,7 @@ export class JsonrpcClient implements IJsonrpcClient {
 
     const { error, result } = responseBody;
     const { resolve, reject, clearTimer } = this.callReceptionMap.get(id)!;
-    error == null ? resolve(result) : reject(error);
+    error == null ? resolve(result) : reject(new JsonrpcCostomError(error));
     clearTimer();
     this.callReceptionMap.delete(id);
   }

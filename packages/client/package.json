@@ -29,5 +29,8 @@
   "dependencies": {
     "@cec/jsonrpc-core": "workspace:^",
     "flatted": "^3.2.9"
+  },
+  "devDependencies": {
+    "@cec/jsonrpc-server": "workspace:^"
   }
 }
