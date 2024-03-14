@@ -3,7 +3,7 @@ import { MessageSenderCtx } from '../src/message-sender-ctx';
 import { describe, it } from 'vitest';
 import { stringify } from 'flatted';
 
-describe.todo('MessageSenderCtx normal', () => {
+describe('MessageSenderCtx normal', () => {
   let sendMessage = '';
   const messageSender: MessageSender = (message: string) => (sendMessage = message);
   const messageSenderCtx = new MessageSenderCtx(messageSender);

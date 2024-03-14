@@ -42,4 +42,17 @@ describe('onCall', () => {
       expect(error.toString()).includes(JsonrpcErrorMessage.MethodNotFound);
     }
   });
+
+  it('onCall callHandler throw error', async ({ expect }) => {
+    const { jsonrpcServer, jsonrpcClient } = getJsonrpcInstance({ delay: 100 });
+    jsonrpcServer.onCall('errorMethod', () => {
+      return Promise.reject('error');
+    });
+
+    try {
+      await jsonrpcClient.call('errorMethod');
+    } catch (error) {
+       expect(error.message).includes('the call handler throw error');
+    }
+  });
 });

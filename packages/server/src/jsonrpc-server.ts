@@ -50,6 +50,7 @@ export class JsonrpcServer implements IJsonrpcServer {
     this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, this.jsonrpcBaseConfig);
     this.receiveMessage();
   }
+
   onCall = <Params extends JsonrpcParams>(method: string, callHandler: (params: Params) => any): IDisposable => {
     if (!(toType(method) === 'string' && toType(callHandler) === 'function')) this.throwParamsInternalError('the parameters invalid');
 
@@ -58,14 +59,16 @@ export class JsonrpcServer implements IJsonrpcServer {
 
     return new Disposable(() => this.callHandlerMap.delete(method));
   };
+
   onNotify = <Params extends JsonrpcParams>(notifyName: string, notifyHandler: (params: Params) => void): IDisposable => {
     if (!(toType(notifyName) === 'string' && toType(notifyHandler) === 'function')) this.throwParamsInternalError('the parameters invalid');
 
-    if (this.callHandlerMap.has(notifyName)) this.throwParamsInternalError(`the notify ${notifyName} is repeated`);
+    if (this.notifyHandlerMap.has(notifyName)) this.throwParamsInternalError(`the notify ${notifyName} is repeated`);
     this.notifyHandlerMap.set(notifyName, notifyHandler);
 
     return new Disposable(() => this.notifyHandlerMap.delete(notifyName));
   };
+
   onSubscribe<Params extends JsonrpcParams, PublishValue = any>(
     subjectName: string,
     subscribeHandler: SubscribeHandler<Params, PublishValue>,
@@ -126,7 +129,6 @@ export class JsonrpcServer implements IJsonrpcServer {
           }, JsonrpcServer.SUBSCRIBLE_RESULT_CACHE_MILLIS);
         },
       });
-
       const dispose: Dispose = (subscribeHandler as SubscribeHandler<JsonrpcParams>).call({}, publisher, params);
       onSubscribeCancelMap.set(subscribeId, dispose);
 
@@ -147,8 +149,8 @@ export class JsonrpcServer implements IJsonrpcServer {
     const forSubscribleCancelDisposable = this.onNotify(forSubscribleCancel, subscribleCancelNotifyHandler);
 
     return Disposable.from(
-      forSubscribleDisposable.dispose,
-      forSubscribleCancelDisposable.dispose,
+      () => forSubscribleDisposable.dispose(),
+      () => forSubscribleCancelDisposable.dispose(),
       ...Array.from(onSubscribeCancelMap.values()),
       () => this.onSubscribeSubjectSet.delete(subjectName),
     );
@@ -156,7 +158,11 @@ export class JsonrpcServer implements IJsonrpcServer {
 
   private receiveMessage() {
     const receiveHandler = (messageBody: MessageBody) => {
-      if (messageBody.id != null && isJsonrpcResponseBody(messageBody) && validJsonrpcError(messageBody).isValid) {
+      if (
+        messageBody.id != null &&
+        isJsonrpcResponseBody(messageBody) &&
+        validJsonrpcError((messageBody as JsonrpcResponseBody).error).isValid
+      ) {
         this.msgSenderCtx.send(messageBody as JsonrpcResponseBody);
         return;
       }

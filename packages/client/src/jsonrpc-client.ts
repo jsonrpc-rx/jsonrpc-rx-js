@@ -63,7 +63,7 @@ export class JsonrpcClient implements IJsonrpcClient {
     const isJsonrpcClientConfig =
       toType(msgSender) === 'function' && toType(msgReceiver) === 'function' && this.isJsonrpcClientConfig(jsonrpcClientConfig!);
     if (!isJsonrpcClientConfig) {
-      this.throwParamsInvalidError();
+      this.throwInvalidParamsError();
     }
 
     this.msgSenderCtx = new MessageSenderCtx(this.msgSender, this.jsonrpcClientConfig);
@@ -72,7 +72,7 @@ export class JsonrpcClient implements IJsonrpcClient {
   }
 
   call = <ReplyValue>(method: string, params: JsonrpcParams): Promise<ReplyValue> => {
-    if (!(toType(method) === 'string' && isJsonrpcRequestBodyParams(params))) this.throwParamsInvalidError();
+    if (!(toType(method) === 'string' && isJsonrpcRequestBodyParams(params))) this.throwInvalidParamsError();
 
     const id = uuid();
     const { reject, resolve, promise } = new Deferred<ReplyValue>();
@@ -90,33 +90,22 @@ export class JsonrpcClient implements IJsonrpcClient {
     this.callReceptionMap.set(id, { reject, resolve, clearTimer });
 
     const requestBody: JsonrpcRequestBody = { jsonrpc: '2.0', id, method, params };
-    try {
-      this.msgSenderCtx.send(requestBody);
-    } catch (error) {
-      reject(error);
-    }
+    this.msgSenderCtx.send(requestBody).catch(reject);
+
     return promise;
   };
 
   notify = (notifyName: string, params: JsonrpcParams) => {
-    if (!(toType(notifyName) === 'string' && isJsonrpcRequestBodyParams(params))) this.throwParamsInvalidError();
+    if (!(toType(notifyName) === 'string' && isJsonrpcRequestBodyParams(params))) this.throwInvalidParamsError();
 
     const requestBody: JsonrpcRequestBody = { jsonrpc: '2.0', method: notifyName, params };
     this.msgSenderCtx.send(requestBody);
   };
 
-  subscribe<NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): IDisposable {
-    if (!(toType(subjectName) === 'string' && isObserver(observer) && isJsonrpcRequestBodyParams(params))) this.throwParamsInvalidError();
+  subscribe = async <NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): Promise<IDisposable> => {
+    if (!(toType(subjectName) === 'string' && isObserver(observer) && isJsonrpcRequestBodyParams(params))) this.throwInvalidParamsError();
 
-    let subscribeDispose: Dispose = () => {};
-    const toSubscribe = (subscribeId: string | number) => {
-      if (!(toType(subscribeId) === 'string' || toType(subscribeId) === 'number')) {
-        const internalError = {
-          code: JsonrpcErrorCode.InternalError,
-          message: 'the subscribe-id of response is invalid when subscribing',
-        };
-        throw new JsonrpcCostomError(internalError);
-      }
+    const toSubscribe = (subscribeId: string | number): Dispose => {
       if (this.subscribeObserverMap.has(subjectName)) {
         this.subscribeObserverMap.get(subjectName)?.observers.set(subscribeId, observer);
       } else {
@@ -127,14 +116,16 @@ export class JsonrpcClient implements IJsonrpcClient {
           }),
         });
       }
-      subscribeDispose = () => {
+      return () => {
         this.subscribeObserverMap.get(subjectName)?.observers.delete(subscribeId);
         const forSubscribleCancel = subjectName + FOR_SUBSCRIBLE_CANCEL_SUFFIX;
         this.notify(forSubscribleCancel, [subscribeId]);
       };
     };
+
     const forSubscrible = subjectName + FOR_SUBSCRIBLE_SUFFIX;
-    this.call<string | number>(forSubscrible, params).then(toSubscribe);
+    const result = await this.call<string | number>(forSubscrible, params);
+    const subscribeDispose = toSubscribe(result);
 
     return Disposable.from(subscribeDispose, () => {
       if (this.subscribeObserverMap.has(subjectName)) {
@@ -142,7 +133,7 @@ export class JsonrpcClient implements IJsonrpcClient {
         if (observers.size === 0) disposable.dispose();
       }
     });
-  }
+  };
 
   private receiveMessage() {
     const receiveHandler = (messageBody: MessageBody) => {
@@ -195,15 +186,16 @@ export class JsonrpcClient implements IJsonrpcClient {
   }
 
   private isJsonrpcClientConfig(config?: JsonrpcClientConfig): boolean {
-    const { timeout } = config ?? {};
+    if (config == null) return true;
+    const { timeout } = config;
     return (toType(timeout) === 'number' || timeout == null) && isJsonrpcBaseConfig(config);
   }
 
-  private throwParamsInvalidError() {
-    const internalError = {
-      code: JsonrpcErrorCode.InternalError,
+  private throwInvalidParamsError() {
+    const InvalidParams = {
+      code: JsonrpcErrorCode.InvalidParams,
       message: 'the parameters invalid',
     };
-    throw new JsonrpcCostomError(internalError);
+    throw new JsonrpcCostomError(InvalidParams);
   }
 }

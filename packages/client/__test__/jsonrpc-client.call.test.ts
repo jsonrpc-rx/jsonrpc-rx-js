@@ -57,4 +57,16 @@ describe('call', () => {
       expect(error.toString()).includes('the parameters invalid');
     }
   });
+
+  it('call throw error on send', async ({ expect }) => {
+    const { jsonrpcClient, jsonrpcServer } = getJsonrpcInstance({ delay: 100 });
+
+    jsonrpcServer.onCall('errorMethod', () => {});
+
+    try {
+      await jsonrpcClient.call<number>('errorMethod', [BigInt(123123123123)]);
+    } catch (error) {
+      expect(error.toString()).includes(JsonrpcErrorMessage.InvalidRequest);
+    }
+  });
 });

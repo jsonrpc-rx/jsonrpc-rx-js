@@ -64,7 +64,8 @@ export class JsonrpcCostomError extends Error {
   constructor(jsonrpcError: JsonrpcError) {
     let message = jsonrpcError.message;
     if (jsonrpcError.data) {
-      const maxLen = ((jsonrpcError.data.toString() as string) ?? '').split(/[\n]/).reduce((num, next) => Math.max(num, next.length), 0);
+      const dataString = jsonrpcError.data.toString();
+      const maxLen = dataString.split(/[\n]/).reduce((num: number, next: string) => Math.max(num, next.length), 0);
       const divider = '='.repeat(maxLen);
 
       message += `

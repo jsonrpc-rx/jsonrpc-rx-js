@@ -2,13 +2,13 @@ import { JsonrpcParams } from 'src/jsonrpc/jsonrpc-params';
 import { Dispose, IDisposable } from './disposable';
 
 export interface Publisher<Value = any> {
-  next: (value: Value) => void;
+  next: (value?: Value) => void;
   error: (error: any) => void;
   complete: () => void;
 }
 
 export interface SubscribeHandler<Params extends JsonrpcParams, PublishValue = any> {
-  (publisher: Publisher<PublishValue>, params?: Params): Dispose;
+  (publisher: Publisher<PublishValue>, params: Params): Dispose;
 }
 
 export interface ParamsSubject {

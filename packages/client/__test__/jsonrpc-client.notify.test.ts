@@ -17,9 +17,9 @@ describe('notify', () => {
   it('notify invalid params', async ({ expect }) => {
     const { jsonrpcClient } = getJsonrpcInstance({ delay: 100 });
     try {
-      await jsonrpcClient.call<number>('errorMethod', 'errorParams' as any);
+      await jsonrpcClient.notify('errorMethod', 'errorParams' as any);
     } catch (error) {
-      expect(error.toString()).includes(JsonrpcErrorMessage.InternalError);
+      expect(error.toString()).includes(JsonrpcErrorMessage.InvalidParams);
       expect(error.toString()).includes('the parameters invalid');
     }
   });

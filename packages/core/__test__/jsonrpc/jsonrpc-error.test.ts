@@ -49,12 +49,11 @@ it('JsonrpcCostomError', async ({ expect }) => {
   const jsonrpcError = {
     code: JsonrpcErrorCode.InternalError,
     message: 'it is a test error',
+    data: 'it is a test data',
   };
+
   const error = new JsonrpcCostomError(jsonrpcError);
-
   const name = `[${jsonrpcError.code}]${jsonrpcErrorCodeMessageMap[jsonrpcError.code]}`;
-
-  // console.error(error);
 
   expect(error.name).toEqual(name);
 });

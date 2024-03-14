@@ -27,7 +27,7 @@ export class MessageSenderCtx {
         const internalError = {
           code: JsonrpcErrorCode.InternalError,
           message: 'the request interceptors throw error',
-          data: error.stack ?? error.toString(),
+          data: error.stack,
         };
         throw new JsonrpcCostomError(internalError);
       }
@@ -46,7 +46,7 @@ function stringifyMessageBody(messageBody: MessageBody): string {
     const invalidRequest = {
       code: JsonrpcErrorCode.InvalidRequest,
       message: 'stringify error in client end',
-      data: error.stack ?? error.toString(),
+      data: error.stack,
     };
     throw new JsonrpcCostomError(invalidRequest);
   }
