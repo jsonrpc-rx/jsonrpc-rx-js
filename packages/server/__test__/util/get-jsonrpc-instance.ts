@@ -1,4 +1,4 @@
-import { JsonrpcBaseConfig, JsonrpcServer, MessageHandler, MessageReceiver, MessageSender } from '../../src/';
+import { JsonrpcBaseConfig, JsonrpcServer, MessageHandler, MessageReceiver, MessageSender } from '../../src';
 import { JsonrpcClient, JsonrpcClientConfig } from '@cec/jsonrpc-client';
 
 type JsonrpcInstanceConfig = {

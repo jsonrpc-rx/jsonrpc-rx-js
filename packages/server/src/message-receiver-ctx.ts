@@ -10,6 +10,8 @@ import {
   composeInterceptors,
   invokeAsPromise,
   JsonrpcResponseBody,
+  JsonrpcEnd,
+  MessageType,
 } from '@cec/jsonrpc-core';
 
 export class MessageReceiverCtx {
@@ -23,9 +25,9 @@ export class MessageReceiverCtx {
       let messageBody = parse(message) as MessageBody; // 这一步发生错误的话，错误暂时不处理: 如果解析错误，那么就没有办法将错误向任何一端传递
       if (!isJsonrpcRequestBody(messageBody)) return;
 
-      if (this.baseConfig?.requestInterceptors?.length) {
+      if (this.baseConfig?.interceptors?.length) {
         try {
-          const interceptor = composeInterceptors<JsonrpcRequestBody>(this.baseConfig.requestInterceptors);
+          const interceptor = composeInterceptors(this.baseConfig.interceptors!, { end: JsonrpcEnd.Server, type: MessageType.Request });
           messageBody = (await invokeAsPromise(interceptor, messageBody)) as JsonrpcRequestBody;
         } catch (error: any) {
           messageBody = {

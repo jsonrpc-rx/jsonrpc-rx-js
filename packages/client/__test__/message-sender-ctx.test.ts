@@ -1,4 +1,4 @@
-import { JsonrpcRequestBody, MessageSender, RequestInterceptor } from '@cec/jsonrpc-core';
+import { Interceptor, JsonrpcRequestBody, MessageSender, MessageType } from '@cec/jsonrpc-core';
 import { MessageSenderCtx } from '../src/message-sender-ctx';
 import { describe, it } from 'vitest';
 import { stringify } from 'flatted';
@@ -19,19 +19,35 @@ describe('MessageSenderCtx normal', () => {
 });
 
 describe('MessageSenderCtx RequestInterceptor', async () => {
-  const interceptor01: RequestInterceptor = (requestBody) => {
-    return {
-      ...requestBody,
-      params: [1, 2, 3],
-    };
+  const interceptor01: Interceptor = (envInfo) => {
+    if (envInfo.type === MessageType.Request) {
+      return (requestBody) => {
+        return {
+          ...requestBody,
+          params: [1, 2, 3],
+        };
+      };
+    }
   };
-  const interceptor02: RequestInterceptor = (requestBody) => {
-    return requestBody;
+  const interceptor02: Interceptor = (envInfo) => {
+    if (envInfo.type === MessageType.Request) {
+      (requestBody) => {
+        return requestBody;
+      };
+    }
   };
-  const interceptor03: RequestInterceptor = () => {
-    throw new Error('error coming');
+  const interceptor03: Interceptor = (envInfo) => {
+    if (envInfo.type === MessageType.Request) {
+      return () => {
+        throw new Error('error coming');
+      };
+    }
   };
-  const interceptor04: RequestInterceptor = () => {};
+  const interceptor04: Interceptor = (envInfo) => {
+    if (envInfo.type === MessageType.Request) {
+      return () => {};
+    }
+  };
 
   const messageBody: JsonrpcRequestBody = {
     jsonrpc: '2.0',
@@ -42,7 +58,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
 
   let sendMessage01: string = '';
   const messageSenderCtx01 = new MessageSenderCtx((requestBody) => (sendMessage01 = requestBody), {
-    requestInterceptors: [interceptor01, interceptor02],
+    interceptors: [interceptor01, interceptor02],
   });
   messageSenderCtx01.send(messageBody);
   it('MessageSenderCtx RequestInterceptor change value', ({ expect }) => {
@@ -51,7 +67,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
 
   let sendMessage03: string = '';
   const messageSenderCtx03 = new MessageSenderCtx(() => {}, {
-    requestInterceptors: [interceptor01, interceptor02, interceptor04],
+    interceptors: [interceptor01, interceptor02, interceptor04],
   });
   messageSenderCtx03.send(messageBody);
   it('MessageSenderCtx RequestInterceptor in void', async ({ expect }) => {
@@ -59,7 +75,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
   });
 
   const messageSenderCtx02 = new MessageSenderCtx(() => {}, {
-    requestInterceptors: [interceptor01, interceptor02, interceptor03],
+    interceptors: [interceptor01, interceptor02, interceptor03],
   });
   it('MessageSenderCtx RequestInterceptor occur error 01', async ({ expect }) => {
     await expect(messageSenderCtx02.send(messageBody)).rejects.toThrowError();

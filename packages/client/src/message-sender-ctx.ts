@@ -8,6 +8,8 @@ import {
   JsonrpcRequestBody,
   invokeAsPromise,
   JsonrpcCostomError,
+  JsonrpcEnd,
+  MessageType,
 } from '@cec/jsonrpc-core';
 
 export class MessageSenderCtx {
@@ -19,9 +21,9 @@ export class MessageSenderCtx {
   send = async (messageBody: MessageBody) => {
     let requestBody = messageBody as JsonrpcRequestBody;
 
-    if (this.baseConfig?.requestInterceptors?.length) {
+    if (this.baseConfig?.interceptors?.length) {
       try {
-        const interceptor = composeInterceptors<JsonrpcRequestBody>(this.baseConfig?.requestInterceptors);
+        const interceptor = composeInterceptors(this.baseConfig?.interceptors!, { end: JsonrpcEnd.Client, type: MessageType.Request });
         requestBody = await invokeAsPromise(interceptor, messageBody);
       } catch (error: any) {
         const internalError = {

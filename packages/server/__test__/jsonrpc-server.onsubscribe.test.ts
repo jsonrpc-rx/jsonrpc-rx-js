@@ -1,7 +1,10 @@
 import { describe, it } from 'vitest';
 import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
-import { Deferred, JsonrpcErrorMessage } from '@cec/jsonrpc-client';
-import { sleep } from './util/sleep';
+import { Deferred, JsonrpcEnd, JsonrpcErrorMessage } from '@cec/jsonrpc-client';
+
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 describe('onSubscribe', () => {
   it('onSubscribe normal', async ({ expect }) => {
@@ -78,7 +81,7 @@ describe('onSubscribe', () => {
     expect(count).toEqual(0);
   });
 
-  it('onSubscribe to disposable', async ({ expect }) => {
+  it('onSubscribe to disposable 01', async ({ expect }) => {
     const { jsonrpcServer } = getJsonrpcInstance({ delay: 10 });
     const disposable = jsonrpcServer.onSubscribe('hello', () => () => {});
     disposable.dispose();
@@ -86,11 +89,17 @@ describe('onSubscribe', () => {
     expect(true).toBeTruthy();
   });
 
-  it('onSubscribe to disposable', async ({ expect }) => {
+  it('onSubscribe to disposable 02', async ({ expect }) => {
     const { jsonrpcServer, jsonrpcClient } = getJsonrpcInstance({
       delay: 1,
       server: {
-        requestInterceptors: [() => Promise.reject('requestInterceptor error')],
+        interceptors: [
+          (envInfo) => {
+            if (envInfo.end === JsonrpcEnd.Server) {
+              return () => Promise.reject('requestInterceptor error');
+            }
+          },
+        ],
       },
     });
     jsonrpcServer.onSubscribe('hello', () => () => {});

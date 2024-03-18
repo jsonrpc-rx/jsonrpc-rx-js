@@ -1,7 +1,10 @@
 import { describe, it } from 'vitest';
 import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
 import { Deferred, JsonrpcErrorMessage } from '@cec/jsonrpc-server';
-import { sleep } from './util/sleep';
+
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 describe('subscribe', () => {
   it('subscribe normal', async ({ expect }) => {
@@ -102,7 +105,6 @@ describe('subscribe', () => {
     });
     const disposable01 = await jsonrpcClient.subscribe<number>('hello', { onNext: resolve01 });
     const disposable02 = await jsonrpcClient.subscribe<number>('hello', { onNext: resolve02 });
-    await sleep(100);
     disposable01.dispose();
     disposable02.dispose();
     await sleep(100);

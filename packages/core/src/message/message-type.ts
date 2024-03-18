@@ -1,4 +1,4 @@
 export enum MessageType {
-  Response,
-  Request,
+  Request = 'request',
+  Response = 'response',
 }

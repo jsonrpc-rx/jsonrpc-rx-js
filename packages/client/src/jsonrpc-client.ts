@@ -84,6 +84,7 @@ export class JsonrpcClient implements IJsonrpcClient {
         message: `the method ${method} has called failed, reason: timeout`,
       };
       reject(new JsonrpcCostomError(jsonrpcError));
+      this.callReceptionMap.delete(id);
     }, delayTime);
 
     const clearTimer = () => clearTimeout(timer);
@@ -159,24 +160,24 @@ export class JsonrpcClient implements IJsonrpcClient {
   private receiveMessageForSubscribe(responseBody: JsonrpcResponseBody<SubscribleResult>) {
     if (!(isJsonrpcResponseBody(responseBody) && isSubscribleResult(responseBody.result!))) return;
 
-    const { state, subjectName, data, error } = responseBody.result!;
+    const { state, subjectName, data, error } = { data: [], error: [], ...responseBody.result! };
 
     if (!this.subscribeObserverMap.has(subjectName)) return;
     const { observers, disposable } = this.subscribeObserverMap.get(subjectName)!;
 
     switch (state) {
       case SubscribleResultSatate.Next:
-        for (const { subscribeId, subscribeValue } of data ?? []) {
+        for (const { subscribeId, subscribeValue } of data) {
           observers.get(subscribeId)?.onNext.call({}, subscribeValue);
         }
         break;
       case SubscribleResultSatate.Error:
-        for (const { subscribeId, subscribeError } of error ?? []) {
+        for (const { subscribeId, subscribeError } of error) {
           observers.get(subscribeId)?.onError?.call({}, subscribeError);
         }
         break;
       case SubscribleResultSatate.Complete:
-        for (const { subscribeId } of data ?? []) {
+        for (const { subscribeId } of data) {
           observers.get(subscribeId)?.onComplete?.call({});
           observers.delete(subscribeId);
           if (observers.size === 0) disposable?.dispose();

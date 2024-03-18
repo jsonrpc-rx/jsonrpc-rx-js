@@ -1,6 +1,5 @@
 import { describe, it } from 'vitest';
 import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
-import { throwParseError } from './util/throw-parse-error';
 import { JsonrpcErrorMessage } from '@cec/jsonrpc-server';
 
 describe('call', () => {
@@ -16,7 +15,7 @@ describe('call', () => {
     const { jsonrpcClient, jsonrpcServer } = getJsonrpcInstance({ delay: 100 });
 
     jsonrpcServer.onCall('errorMethod', () => {
-      throwParseError();
+      JSON.parse('{"a":1');
     });
 
     try {

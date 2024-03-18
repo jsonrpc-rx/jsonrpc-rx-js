@@ -1,5 +1,5 @@
-import { JsonrpcRequestBody } from 'src/jsonrpc/jsonrpc-request-body';
-import { JsonrpcResponseBody } from 'src/jsonrpc/jsonrpc-response-body';
+import { JsonrpcRequestBody } from '../jsonrpc/jsonrpc-request-body';
+import { JsonrpcResponseBody } from '../jsonrpc/jsonrpc-response-body';
 
 export type MessageBody = JsonrpcRequestBody | JsonrpcResponseBody;
 

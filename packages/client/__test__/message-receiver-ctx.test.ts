@@ -1,4 +1,12 @@
-import { JsonrpcRequestBody, JsonrpcResponseBody, MessageHandler, MessageReceiver, ResponseInterceptor } from '@cec/jsonrpc-core';
+import {
+  JsonrpcRequestBody,
+  JsonrpcResponseBody,
+  MessageHandler,
+  MessageReceiver,
+  Interceptor,
+  MessageType,
+  MessageBody,
+} from '@cec/jsonrpc-core';
 import { MessageReceiverCtx } from '../src/message-receiver-ctx';
 import { describe, it } from 'vitest';
 import { stringify } from 'flatted';
@@ -41,17 +49,28 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
   let messageHandler: MessageHandler;
   const messageReceiver: MessageReceiver = (handler) => (messageHandler = handler);
 
-  const interceptor01: ResponseInterceptor = (responseBody: JsonrpcResponseBody) => {
-    responseBody.result = [1, 2, 3];
-    return responseBody;
+  const interceptor01: Interceptor = (envInfo) => {
+    if ((envInfo.type = MessageType.Response)) {
+      return (messageBody: MessageBody) => {
+        const responseBody = messageBody as JsonrpcResponseBody;
+        responseBody.result = [1, 2, 3];
+        return responseBody;
+      };
+    }
   };
-  const interceptor02: ResponseInterceptor = () => {};
-  const interceptor03: ResponseInterceptor = () => {
-    throw new Error('error coming');
+  const interceptor02: Interceptor = (envInfo) => {
+    if ((envInfo.type = MessageType.Response)) {
+      return () => {};
+    }
+  };
+  const interceptor03: Interceptor = (envInfo) => () => {
+    if ((envInfo.type = MessageType.Response)) {
+      throw new Error('error coming');
+    }
   };
 
   const messageReceiverCtx01 = new MessageReceiverCtx(messageReceiver, {
-    responseInterceptors: [interceptor01],
+    interceptors: [interceptor01],
   });
   let receiveResponseBody01: JsonrpcResponseBody;
   messageReceiverCtx01.receive((responseBody) => {
@@ -65,7 +84,7 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
   });
 
   const messageReceiverCtx02 = new MessageReceiverCtx(messageReceiver, {
-    responseInterceptors: [interceptor01, interceptor02],
+    interceptors: [interceptor01, interceptor02],
   });
   let receiveResponseBody02: JsonrpcResponseBody;
   messageReceiverCtx02.receive((responseBody) => {
@@ -77,7 +96,7 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
   });
 
   const messageReceiverCtx03 = new MessageReceiverCtx(messageReceiver, {
-    responseInterceptors: [interceptor01, interceptor02, interceptor03],
+    interceptors: [interceptor01, interceptor02, interceptor03],
   });
   let receiveResponseBody03: JsonrpcResponseBody;
   messageReceiverCtx03.receive((responseBody) => {

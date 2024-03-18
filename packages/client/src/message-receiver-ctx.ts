@@ -3,13 +3,14 @@ import {
   MessageHandler,
   MessageReceiver,
   MessageBody,
-  JsonrpcErrorMessage,
   JsonrpcErrorCode,
   composeInterceptors,
   invokeAsPromise,
   JsonrpcResponseBody,
   isJsonrpcResponseBody,
   JsonrpcBaseConfig,
+  JsonrpcEnd,
+  MessageType,
 } from '@cec/jsonrpc-core';
 
 export class MessageReceiverCtx {
@@ -23,9 +24,9 @@ export class MessageReceiverCtx {
       let responseBody = parse(message) as JsonrpcResponseBody; // 这一步发生错误的话，错误就不能和传递给 call 方法。所以这里的错误暂时不处理
       if (!isJsonrpcResponseBody(responseBody)) return;
 
-      if (this.baseConfig?.responseInterceptors?.length) {
+      if (this.baseConfig?.interceptors?.length) {
         try {
-          const interceptor = composeInterceptors<JsonrpcResponseBody>(this.baseConfig.responseInterceptors!);
+          const interceptor = composeInterceptors(this.baseConfig.interceptors!, { end: JsonrpcEnd.Client, type: MessageType.Response });
           responseBody = await invokeAsPromise(interceptor, responseBody);
         } catch (error: any) {
           responseBody = {
