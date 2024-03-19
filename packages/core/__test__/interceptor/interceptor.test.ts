@@ -38,7 +38,12 @@ it('composeInterceptors normal', async ({ expect }) => {
   const interceptor2 = (envInfo: InterceptorEnvInfo) => (messageBody: MessageBody) => JSON.parse(JSON.stringify(messageBody));
   const interceptor3 = (envInfo: InterceptorEnvInfo) => undefined;
 
-  const allFunc = composeInterceptors([interceptor1, interceptor2, interceptor3], { end: JsonrpcEnd.Client, type: MessageType.Request });
+  const interceptors = [interceptor1, interceptor2, interceptor3].map((item) => ({
+    interceptor: item,
+    envInfo: { end: JsonrpcEnd.Client, type: MessageType.Request },
+    safeContext: {},
+  }));
+  const allFunc = composeInterceptors(interceptors);
   const param: JsonrpcRequestBody = { jsonrpc: '2.0', method: 'test', params: [1, 2], id: 1 };
   const result = await allFunc(param);
   expect(result).toStrictEqual(param);
@@ -48,7 +53,12 @@ it('composeInterceptors error', async ({ expect }) => {
   const interceptor1 = (envInfo: InterceptorEnvInfo) => (messageBody: MessageBody) => Promise.resolve(messageBody);
   const interceptor2 = (envInfo: InterceptorEnvInfo) => (messageBody: MessageBody) => Promise.reject('interceptor error');
 
-  const allFunc = composeInterceptors([interceptor1, interceptor2], { end: JsonrpcEnd.Client, type: MessageType.Request });
+  const interceptors = [interceptor1, interceptor2].map((item) => ({
+    interceptor: item,
+    envInfo: { end: JsonrpcEnd.Client, type: MessageType.Request },
+    safeContext: {},
+  }));
+  const allFunc = composeInterceptors(interceptors);
   const param: JsonrpcRequestBody = { jsonrpc: '2.0', method: 'test', params: [1, 2], id: 1 };
   try {
     await allFunc(param);

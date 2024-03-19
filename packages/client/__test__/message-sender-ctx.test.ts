@@ -6,7 +6,7 @@ import { stringify } from 'flatted';
 describe('MessageSenderCtx normal', () => {
   let sendMessage = '';
   const messageSender: MessageSender = (message: string) => (sendMessage = message);
-  const messageSenderCtx = new MessageSenderCtx(messageSender);
+  const messageSenderCtx = new MessageSenderCtx(messageSender, []);
   const messageBody: JsonrpcRequestBody = {
     jsonrpc: '2.0',
     method: 'xxxxx',
@@ -57,7 +57,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
   const messageBodyFilted: JsonrpcRequestBody = { jsonrpc: '2.0', method: 'xxx', id: 'qwe', params: [1, 2, 3] };
 
   let sendMessage01: string = '';
-  const messageSenderCtx01 = new MessageSenderCtx((requestBody) => (sendMessage01 = requestBody), {
+  const messageSenderCtx01 = new MessageSenderCtx((requestBody) => (sendMessage01 = requestBody), [{}, {}], {
     interceptors: [interceptor01, interceptor02],
   });
   messageSenderCtx01.send(messageBody);
@@ -66,7 +66,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
   });
 
   let sendMessage03: string = '';
-  const messageSenderCtx03 = new MessageSenderCtx(() => {}, {
+  const messageSenderCtx03 = new MessageSenderCtx(() => {}, [{}, {}, {}], {
     interceptors: [interceptor01, interceptor02, interceptor04],
   });
   messageSenderCtx03.send(messageBody);
@@ -74,14 +74,14 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
     await expect(sendMessage03).toEqual('');
   });
 
-  const messageSenderCtx02 = new MessageSenderCtx(() => {}, {
+  const messageSenderCtx02 = new MessageSenderCtx(() => {}, [{}, {}, {}], {
     interceptors: [interceptor01, interceptor02, interceptor03],
   });
   it('MessageSenderCtx RequestInterceptor occur error 01', async ({ expect }) => {
     await expect(messageSenderCtx02.send(messageBody)).rejects.toThrowError();
   });
 
-  const messageSenderCtx04 = new MessageSenderCtx(() => {});
+  const messageSenderCtx04 = new MessageSenderCtx(() => {}, []);
   it('MessageSenderCtx RequestInterceptor occur error 02', ({ expect }) => {
     expect(
       messageSenderCtx04.send({

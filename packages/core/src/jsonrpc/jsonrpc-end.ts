@@ -1,4 +1,4 @@
 export enum JsonrpcEnd {
-  Server,
-  Client,
+  Server = 'server',
+  Client = 'client',
 }

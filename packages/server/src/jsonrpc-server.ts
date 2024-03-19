@@ -46,8 +46,13 @@ export class JsonrpcServer implements IJsonrpcServer {
     private msgReceiver: MessageReceiver,
     private jsonrpcBaseConfig?: JsonrpcBaseConfig,
   ) {
-    this.msgSenderCtx = new MessageSenderCtx(this.msgSender, this.jsonrpcBaseConfig);
-    this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, this.jsonrpcBaseConfig);
+    const interceptorNum = this.jsonrpcBaseConfig?.interceptors?.length ?? 0;
+    const interceptorSafeContextArr = '.'
+      .repeat(interceptorNum)
+      .split('')
+      .map(() => ({}));
+    this.msgSenderCtx = new MessageSenderCtx(this.msgSender, interceptorSafeContextArr, this.jsonrpcBaseConfig);
+    this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, interceptorSafeContextArr, this.jsonrpcBaseConfig);
     this.receiveMessage();
   }
 

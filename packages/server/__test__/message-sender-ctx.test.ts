@@ -6,7 +6,7 @@ import { parse, stringify } from 'flatted';
 describe('MessageSenderCtx normal', () => {
   let sendMessage = '';
   const messageSender: MessageSender = (message: string) => (sendMessage = message);
-  const messageSenderCtx = new MessageSenderCtx(messageSender);
+  const messageSenderCtx = new MessageSenderCtx(messageSender, []);
   const messageBody: JsonrpcResponseBody = {
     jsonrpc: '2.0',
     id: 'qwertyu',
@@ -19,7 +19,7 @@ describe('MessageSenderCtx normal', () => {
 describe('MessageSenderCtx error', () => {
   let sendMessage = '';
   const messageSender: MessageSender = (message: string) => (sendMessage = message);
-  const messageSenderCtx = new MessageSenderCtx(messageSender);
+  const messageSenderCtx = new MessageSenderCtx(messageSender, []);
   const messageBody: JsonrpcResponseBody = {
     jsonrpc: '2.0',
     id: '123',
@@ -66,7 +66,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
   const messageBodyFilted: JsonrpcResponseBody = { jsonrpc: '2.0', id: 'qwe', result: [1, 2, 3] };
 
   let sendMessage01: string = '';
-  const messageSenderCtx01 = new MessageSenderCtx((responseBody) => (sendMessage01 = responseBody), {
+  const messageSenderCtx01 = new MessageSenderCtx((responseBody) => (sendMessage01 = responseBody), [{}, {}], {
     interceptors: [interceptor01, interceptor02],
   });
   messageSenderCtx01.send(messageBody);
@@ -75,7 +75,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
   });
 
   let sendMessage02: string = '';
-  const messageSenderCtx02 = new MessageSenderCtx(() => {}, {
+  const messageSenderCtx02 = new MessageSenderCtx(() => {}, [{}, {}, {}], {
     interceptors: [interceptor01, interceptor02, interceptor04],
   });
   messageSenderCtx02.send(messageBody);
@@ -84,7 +84,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
   });
 
   let sendMessage03: string = '';
-  const messageSenderCtx03 = new MessageSenderCtx((responseBody) => (sendMessage03 = responseBody), {
+  const messageSenderCtx03 = new MessageSenderCtx((responseBody) => (sendMessage03 = responseBody), [{}, {}, {}], {
     interceptors: [interceptor01, interceptor02, interceptor03],
   });
   messageSenderCtx03.send(messageBody);

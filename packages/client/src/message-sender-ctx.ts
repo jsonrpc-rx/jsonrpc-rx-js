@@ -10,29 +10,51 @@ import {
   JsonrpcCostomError,
   JsonrpcEnd,
   MessageType,
+  InterceptorSafeContext,
 } from '@cec/jsonrpc-core';
 
 export class MessageSenderCtx {
+  private interceptorInvoker = (messageBody: MessageBody) => Promise.resolve(messageBody);
+
   constructor(
     private messageSender: MessageSender,
+    private interceptorSafeContextArr: InterceptorSafeContext[],
     private baseConfig?: JsonrpcBaseConfig,
-  ) {}
+  ) {
+    if (this.baseConfig?.interceptors?.length) {
+      const interceptorInfo = this.baseConfig.interceptors.map((interceptor, index) => ({
+        interceptor,
+        envInfo: {
+          end: JsonrpcEnd.Client,
+          type: MessageType.Request,
+          messageSender: this.messageSender,
+        },
+        safeContext: this.interceptorSafeContextArr[index],
+      }));
+      try {
+        this.interceptorInvoker = composeInterceptors(interceptorInfo);
+      } catch (error: any) {
+        throw new JsonrpcCostomError({
+          code: JsonrpcErrorCode.InternalError,
+          message: 'interceptors initialization failed',
+          data: error,
+        });
+      }
+    }
+  }
 
   send = async (messageBody: MessageBody) => {
     let requestBody = messageBody as JsonrpcRequestBody;
 
-    if (this.baseConfig?.interceptors?.length) {
-      try {
-        const interceptor = composeInterceptors(this.baseConfig?.interceptors!, { end: JsonrpcEnd.Client, type: MessageType.Request });
-        requestBody = await invokeAsPromise(interceptor, messageBody);
-      } catch (error: any) {
-        const internalError = {
-          code: JsonrpcErrorCode.InternalError,
-          message: 'the request interceptors throw error',
-          data: error.stack,
-        };
-        throw new JsonrpcCostomError(internalError);
-      }
+    try {
+      requestBody = await invokeAsPromise(this.interceptorInvoker, messageBody);
+    } catch (error: any) {
+      const internalError = {
+        code: JsonrpcErrorCode.InternalError,
+        message: 'the interceptors execution error',
+        data: error.stack,
+      };
+      throw new JsonrpcCostomError(internalError);
     }
 
     if (requestBody == null) return;

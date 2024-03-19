@@ -65,9 +65,13 @@ export class JsonrpcClient implements IJsonrpcClient {
     if (!isJsonrpcClientConfig) {
       this.throwInvalidParamsError();
     }
-
-    this.msgSenderCtx = new MessageSenderCtx(this.msgSender, this.jsonrpcClientConfig);
-    this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, this.jsonrpcClientConfig);
+    const interceptorNum = this.jsonrpcClientConfig?.interceptors?.length ?? 0;
+    const interceptorSafeContextArr = '.'
+      .repeat(interceptorNum)
+      .split('')
+      .map(() => ({}));
+    this.msgSenderCtx = new MessageSenderCtx(this.msgSender, interceptorSafeContextArr, this.jsonrpcClientConfig);
+    this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, interceptorSafeContextArr, this.jsonrpcClientConfig);
     this.receiveMessage();
   }
 

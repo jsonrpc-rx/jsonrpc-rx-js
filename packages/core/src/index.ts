@@ -12,7 +12,7 @@ export { MessageHandler, MessageReceiver } from './message/message-receiver';
 export { MessageSender } from './message/message-sender';
 export { MessageType } from './message/message-type';
 
-export { Interceptor, InterceptorEnvInfo, composeInterceptors, composeAsPromise } from './interceptor/interceptor'
+export { Interceptor, InterceptorEnvInfo, InterceptorSafeContext, composeInterceptors, composeAsPromise } from './interceptor/interceptor';
 
 export { IDisposable, Disposable, Dispose } from './jsonrpc-rx/disposable';
 export { Publisher, ParamsSubject, SubscribeHandler, ensurePublisher } from './jsonrpc-rx/params-subject';

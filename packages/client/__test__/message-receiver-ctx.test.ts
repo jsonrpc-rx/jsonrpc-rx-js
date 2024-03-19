@@ -14,7 +14,7 @@ import { stringify } from 'flatted';
 describe('MessageReceiverCtx normal', () => {
   let messageHandler: MessageHandler;
   const messageReceiver: MessageReceiver = (handler) => (messageHandler = handler);
-  const messageReceiverCtx = new MessageReceiverCtx(messageReceiver);
+  const messageReceiverCtx = new MessageReceiverCtx(messageReceiver, []);
 
   let receiveResponseBody: JsonrpcResponseBody;
   messageReceiverCtx.receive((responseBody) => {
@@ -30,7 +30,7 @@ describe('MessageReceiverCtx normal', () => {
 describe('MessageReceiverCtx error', async () => {
   let messageHandler: MessageHandler;
   const messageReceiver: MessageReceiver = (handler) => (messageHandler = handler);
-  const messageReceiverCtx = new MessageReceiverCtx(messageReceiver);
+  const messageReceiverCtx = new MessageReceiverCtx(messageReceiver, []);
 
   let receiveResponseBody: JsonrpcResponseBody;
   messageReceiverCtx.receive((responseBody) => {
@@ -69,7 +69,7 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
     }
   };
 
-  const messageReceiverCtx01 = new MessageReceiverCtx(messageReceiver, {
+  const messageReceiverCtx01 = new MessageReceiverCtx(messageReceiver, [{}], {
     interceptors: [interceptor01],
   });
   let receiveResponseBody01: JsonrpcResponseBody;
@@ -83,7 +83,7 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
     expect(changedResponseBody01).toStrictEqual(receiveResponseBody01);
   });
 
-  const messageReceiverCtx02 = new MessageReceiverCtx(messageReceiver, {
+  const messageReceiverCtx02 = new MessageReceiverCtx(messageReceiver, [{}, {}], {
     interceptors: [interceptor01, interceptor02],
   });
   let receiveResponseBody02: JsonrpcResponseBody;
@@ -95,7 +95,7 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
     expect(receiveResponseBody02).toBeUndefined();
   });
 
-  const messageReceiverCtx03 = new MessageReceiverCtx(messageReceiver, {
+  const messageReceiverCtx03 = new MessageReceiverCtx(messageReceiver, [{}, {}, {}], {
     interceptors: [interceptor01, interceptor02, interceptor03],
   });
   let receiveResponseBody03: JsonrpcResponseBody;
@@ -107,7 +107,7 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
     expect(receiveResponseBody03.error).toBeDefined();
   });
 
-  const messageReceiverCtx04 = new MessageReceiverCtx(messageReceiver);
+  const messageReceiverCtx04 = new MessageReceiverCtx(messageReceiver, []);
   messageReceiverCtx04.receive(() => {});
   it('MessageReceiverCtx ResponseInterceptor occur error 02', ({ expect }) => {
     expect(messageHandler!('{ "jsonrpc": "2.0",')).rejects.toThrowError();
