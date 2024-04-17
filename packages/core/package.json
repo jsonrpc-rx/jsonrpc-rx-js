@@ -1,5 +1,5 @@
 {
-  "name": "@cec/jsonrpc-core",
+  "name": "@jsonrpc-rx/core",
   "version": "0.0.1",
   "author": "cross-end-call",
   "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",

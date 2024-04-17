@@ -14,7 +14,7 @@ import {
   MessageType,
   InterceptorSafeContext,
   JsonrpcCostomError,
-} from '@cec/jsonrpc-core';
+} from '@jsonrpc-rx/core';
 
 export class MessageReceiverCtx {
   private interceptorInvoker = (messageBody: MessageBody) => Promise.resolve(messageBody);

@@ -1,4 +1,4 @@
-import { Interceptor, JsonrpcRequestBody, MessageSender, MessageType } from '@cec/jsonrpc-core';
+import { Interceptor, JsonrpcRequestBody, MessageSender, MessageType } from '@jsonrpc-rx/core';
 import { MessageSenderCtx } from '../src/message-sender-ctx';
 import { describe, it } from 'vitest';
 import { stringify } from 'flatted';

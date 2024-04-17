@@ -1,5 +1,5 @@
 {
-  "name": "@cec/async-func-params-interceptor",
+  "name": "@jsonrpc-rx/async-func-params-interceptor",
   "version": "0.0.1",
   "author": "cross-end-call",
   "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
@@ -27,9 +27,9 @@
     "clean": "rimraf dist/ & rimraf node_modules/"
   },
   "dependencies": {
-    "@cec/jsonrpc-core": "workspace:^"
+    "@jsonrpc-rx/core": "workspace:^"
   },
   "devDependencies": {
-    "@cec/unit-test-tool": "workspace:^"
+    "@jsonrpc-rx/unit-test-tool": "workspace:^"
   }
 }

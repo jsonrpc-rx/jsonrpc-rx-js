@@ -26,7 +26,7 @@ import {
   Observer,
   JsonrpcParams,
   JsonrpcCostomError,
-} from '@cec/jsonrpc-core';
+} from '@jsonrpc-rx/core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
 

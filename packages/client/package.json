@@ -1,5 +1,5 @@
 {
-  "name": "@cec/jsonrpc-client",
+  "name": "@jsonrpc-rx/client",
   "version": "0.0.1",
   "author": "cross-end-call",
   "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
@@ -27,10 +27,10 @@
     "clean": "rimraf dist/ & rimraf node_modules/"
   },
   "dependencies": {
-    "@cec/jsonrpc-core": "workspace:^",
+    "@jsonrpc-rx/core": "workspace:^",
     "flatted": "^3.2.9"
   },
   "devDependencies": {
-    "@cec/unit-test-tool": "workspace:^"
+    "@jsonrpc-rx/unit-test-tool": "workspace:^"
   }
 }

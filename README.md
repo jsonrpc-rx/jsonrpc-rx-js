@@ -1,4 +1,4 @@
-# jsonrpc-cec
+# jsonrpc-rx
 
 A tool library for handling rpc communication based on the [JSON RPC](https://www.jsonrpc.org/specification) specification
 
@@ -6,7 +6,7 @@ A tool library for handling rpc communication based on the [JSON RPC](https://ww
 
 ## Introduction
 
-为什么要写 jsonrpc-cec？
+为什么要写 jsonrpc-rx?
 
 首先，这个工具的适用于可进行全双工通讯的场景如：
 
@@ -14,7 +14,7 @@ A tool library for handling rpc communication based on the [JSON RPC](https://ww
 - electron 中主进程和渲染进程的通讯
 - 可进行 websocket 通讯
 
-这些场景的问题各有不同，而  jsonrpc-cec 能将这些实现“归一化”。我们看个简单的示例——Web Worker 和 window 之间的通讯：
+这些场景的问题各有不同，而  jsonrpc-rx 能将这些实现“归一化”。我们看个简单的示例——Web Worker 和 window 之间的通讯：
 
 ```js
 // parent.js
@@ -43,7 +43,7 @@ self.addEventListener('message', function (event) {
 });
 ```
 
-其实，message-sender 和 message-receiver 才是具体的场景下的差一点，所有的通讯行为，在一端，只需要实现 message-sender 和 message-receiver，就可以使用  jsonrpc-cec，如在 websecoket 的场景：
+其实，message-sender 和 message-receiver 才是具体的场景下的差一点，所有的通讯行为，在一端，只需要实现 message-sender 和 message-receiver，就可以使用  jsonrpc-rx，如在 websecoket 的场景：
 
 ```js
 ```

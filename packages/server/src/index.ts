@@ -1,2 +1,2 @@
 export { JsonrpcServer } from './jsonrpc-server';
-export * from '@cec/jsonrpc-core';
+export * from '@jsonrpc-rx/core';

@@ -28,7 +28,7 @@ import {
   JsonrpcBaseConfig,
   JsonrpcCostomError,
   ReturnPromiseEachItem,
-} from '@cec/jsonrpc-core';
+} from '@jsonrpc-rx/core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
 

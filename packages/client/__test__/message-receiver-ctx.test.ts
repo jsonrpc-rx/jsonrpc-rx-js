@@ -6,7 +6,7 @@ import {
   Interceptor,
   MessageType,
   MessageBody,
-} from '@cec/jsonrpc-core';
+} from '@jsonrpc-rx/core';
 import { MessageReceiverCtx } from '../src/message-receiver-ctx';
 import { describe, it } from 'vitest';
 import { stringify } from 'flatted';

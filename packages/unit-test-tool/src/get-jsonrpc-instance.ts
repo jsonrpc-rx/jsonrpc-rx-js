@@ -1,6 +1,6 @@
-import { JsonrpcBaseConfig, MessageHandler, MessageReceiver, MessageSender } from '@cec/jsonrpc-core';
-import { JsonrpcServer } from '@cec/jsonrpc-server';
-import { JsonrpcClient } from '@cec/jsonrpc-client';
+import { JsonrpcBaseConfig, MessageHandler, MessageReceiver, MessageSender } from '@jsonrpc-rx/core';
+import { JsonrpcServer } from '@jsonrpc-rx/server';
+import { JsonrpcClient } from '@jsonrpc-rx/client';
 
 type JsonrpcInstanceConfig = {
   delay: number;

@@ -8,7 +8,7 @@ import {
   MessageType,
   invokeAsPromise,
   toType,
-} from '@cec/jsonrpc-core';
+} from '@jsonrpc-rx/core';
 import { FuncFlatted } from './func-flatted';
 
 type SafeContext = {
