@@ -164,7 +164,7 @@ export class JsonrpcClient implements IJsonrpcClient {
   private receiveMessageForSubscribe(responseBody: JsonrpcResponseBody<SubscribleResult>) {
     if (!(isJsonrpcResponseBody(responseBody) && isSubscribleResult(responseBody.result!))) return;
 
-    const { state, subjectName, data, error, } = { data: [], error: [], ...responseBody.result! };
+    const { state, subjectName, data, error } = { data: [], error: [], ...responseBody.result! };
 
     if (!this.subscribeObserverMap.has(subjectName)) return;
     const { observers, disposable } = this.subscribeObserverMap.get(subjectName)!;
@@ -184,7 +184,9 @@ export class JsonrpcClient implements IJsonrpcClient {
         for (const { subscribeId } of data) {
           observers.get(subscribeId)?.onComplete?.call({});
           observers.delete(subscribeId);
-          if (observers.size === 0) disposable?.dispose();
+          if (observers.size === 0) {
+            disposable?.dispose();
+          }
         }
         break;
     }
