@@ -1,7 +1,7 @@
 {
   "name": "cross-end-call",
   "version": "1.0.0",
-  "description": "A simple cross-end calling library that does not implement any protocol and can be used to call capabilities between ends. Implement communication model into method calling model",
+  "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
   "main": "index.js",
   "scripts": {
     "coverage": "vitest run --coverage",

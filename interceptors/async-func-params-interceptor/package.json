@@ -2,7 +2,7 @@
   "name": "@cec/async-func-params-interceptor",
   "version": "0.0.1",
   "author": "cross-end-call",
-  "description": "A js/ts implementation of jsonrpc 2.0",
+  "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "typings": "./dist/index.d.ts",
