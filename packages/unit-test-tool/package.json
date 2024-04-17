@@ -1,0 +1,34 @@
+{
+  "name": "@cec/unit-test-tool",
+  "version": "0.0.1",
+  "author": "cross-end-call",
+  "description": "A js/ts implementation of jsonrpc 2.0",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "typings": "./dist/index.d.ts",
+  "keywords": [],
+  "license": "ISC",
+  "files": [
+    "dist/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cross-end-call/jsonrpc-rx.git"
+  },
+  "scripts": {
+    "test": "vitest",
+    "build": "rimraf dist/ && run-p build:esm build:cjs build:dts",
+    "build:esm": "rollup -c --environment NODE_ENV:esm",
+    "build:cjs": "rollup -c --environment NODE_ENV:cjs",
+    "build:dts": "rollup -c --environment NODE_ENV:dts",
+    "clean": "rimraf dist/ & rimraf node_modules/"
+  },
+  "devDependencies": {
+    "@cec/jsonrpc-server": "workspace:^",
+    "@cec/jsonrpc-client": "workspace:^",
+    "@cec/jsonrpc-core": "workspace:^"
+  }
+}
