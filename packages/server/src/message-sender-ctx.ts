@@ -27,7 +27,7 @@ export class MessageSenderCtx {
         envInfo: {
           end: JsonrpcEnd.Server,
           type: MessageType.Response,
-          messageSender: this.messageSender,
+          sendMessage: this.send.bind(this),
         },
         safeContext: this.interceptorSafeContextArr[index],
       }));
@@ -43,13 +43,13 @@ export class MessageSenderCtx {
     }
   }
 
-  send = async (responseBody: JsonrpcResponseBody) => {
-    let filteredResponseBody = responseBody;
+  send = async (messageBody: MessageBody) => {
+    let filteredResponseBody = messageBody as JsonrpcResponseBody;
     try {
-      filteredResponseBody = await invokeAsPromise(this.interceptorInvoker, responseBody);
+      filteredResponseBody = await invokeAsPromise(this.interceptorInvoker, messageBody);
     } catch (error: any) {
       filteredResponseBody = {
-        id: responseBody.id,
+        id: messageBody.id!,
         jsonrpc: '2.0',
         error: {
           code: JsonrpcErrorCode.ServerError,

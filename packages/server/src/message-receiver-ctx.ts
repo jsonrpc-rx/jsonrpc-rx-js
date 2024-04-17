@@ -30,7 +30,6 @@ export class MessageReceiverCtx {
         envInfo: {
           end: JsonrpcEnd.Server,
           type: MessageType.Request,
-          messageReceiver: this.messageReceiver,
         },
         safeContext: this.interceptorSafeContextArr[index],
       }));

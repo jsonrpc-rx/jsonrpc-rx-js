@@ -1,4 +1,4 @@
-import { JsonrpcParams } from 'src/jsonrpc/jsonrpc-params';
+import { JsonrpcParams } from '../jsonrpc/jsonrpc-params';
 import { toType } from '../util/to-type';
 import { IDisposable } from './disposable';
 

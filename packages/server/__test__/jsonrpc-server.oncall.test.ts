@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
-import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
-import { JsonrpcErrorMessage } from '@cec/jsonrpc-client';
+import { getJsonrpcInstance } from '@cec/unit-test-tool';
+import { JsonrpcErrorMessage } from '@cec/jsonrpc-core';
 
 describe('onCall', () => {
   it('onCall method invalid params', async ({ expect }) => {

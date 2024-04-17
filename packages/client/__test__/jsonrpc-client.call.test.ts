@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
-import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
-import { JsonrpcErrorMessage } from '@cec/jsonrpc-server';
+import { getJsonrpcInstance } from '@cec/unit-test-tool';
+import { JsonrpcErrorMessage } from '@cec/jsonrpc-core';
 
 describe('call', () => {
   it('call method sum', async ({ expect }) => {

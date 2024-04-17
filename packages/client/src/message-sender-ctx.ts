@@ -27,7 +27,7 @@ export class MessageSenderCtx {
         envInfo: {
           end: JsonrpcEnd.Client,
           type: MessageType.Request,
-          messageSender: this.messageSender,
+          sendMessage: this.send.bind(this),
         },
         safeContext: this.interceptorSafeContextArr[index],
       }));

@@ -28,8 +28,7 @@ export class MessageReceiverCtx {
         interceptor,
         envInfo: {
           end: JsonrpcEnd.Client,
-          type: MessageType.Response,
-          messageReceiver: this.messageReceiver,
+          type: MessageType.Response
         },
         safeContext: this.interceptorSafeContextArr[index],
       }));

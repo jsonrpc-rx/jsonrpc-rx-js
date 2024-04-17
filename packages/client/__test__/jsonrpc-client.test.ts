@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { JsonrpcErrorMessage } from '@cec/jsonrpc-server';
+import { JsonrpcErrorMessage } from '@cec/jsonrpc-core';
 import { JsonrpcClient } from '../src';
 
 it('JsonrpcClient error', async ({ expect }) => {

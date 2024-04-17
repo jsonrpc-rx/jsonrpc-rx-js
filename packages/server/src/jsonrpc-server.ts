@@ -27,6 +27,7 @@ import {
   JsonrpcParams,
   JsonrpcBaseConfig,
   JsonrpcCostomError,
+  ReturnPromiseEachItem,
 } from '@cec/jsonrpc-core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -56,8 +57,10 @@ export class JsonrpcServer implements IJsonrpcServer {
     this.receiveMessage();
   }
 
-  onCall = <Params extends JsonrpcParams>(method: string, callHandler: (params: Params) => any): IDisposable => {
-    if (!(toType(method) === 'string' && toType(callHandler) === 'function')) this.throwParamsInternalError('the parameters invalid');
+  onCall = <Params extends JsonrpcParams>(method: string, callHandler: (params: ReturnPromiseEachItem<Params>) => any): IDisposable => {
+    if (!(toType(method) === 'string' && (toType(callHandler) === 'function' || toType(callHandler) === 'asyncfunction'))) {
+      this.throwParamsInternalError('the parameters invalid');
+    }
 
     if (this.callHandlerMap.has(method)) this.throwParamsInternalError(`the method ${method} is repeated`);
     this.callHandlerMap.set(method, callHandler);
@@ -65,8 +68,13 @@ export class JsonrpcServer implements IJsonrpcServer {
     return new Disposable(() => this.callHandlerMap.delete(method));
   };
 
-  onNotify = <Params extends JsonrpcParams>(notifyName: string, notifyHandler: (params: Params) => void): IDisposable => {
-    if (!(toType(notifyName) === 'string' && toType(notifyHandler) === 'function')) this.throwParamsInternalError('the parameters invalid');
+  onNotify = <Params extends JsonrpcParams>(
+    notifyName: string,
+    notifyHandler: (params: ReturnPromiseEachItem<Params>) => void,
+  ): IDisposable => {
+    if (!(toType(notifyName) === 'string' && (toType(notifyHandler) === 'function' || toType(notifyHandler) === 'asyncfunction'))) {
+      this.throwParamsInternalError('the parameters invalid');
+    }
 
     if (this.notifyHandlerMap.has(notifyName)) this.throwParamsInternalError(`the notify ${notifyName} is repeated`);
     this.notifyHandlerMap.set(notifyName, notifyHandler);
@@ -76,7 +84,7 @@ export class JsonrpcServer implements IJsonrpcServer {
 
   onSubscribe<Params extends JsonrpcParams, PublishValue = any>(
     subjectName: string,
-    subscribeHandler: SubscribeHandler<Params, PublishValue>,
+    subscribeHandler: SubscribeHandler<ReturnPromiseEachItem<Params>, PublishValue>,
   ): IDisposable {
     if (!(toType(subjectName) === 'string' && toType(subscribeHandler) === 'function'))
       this.throwParamsInternalError('the parameters invalid');

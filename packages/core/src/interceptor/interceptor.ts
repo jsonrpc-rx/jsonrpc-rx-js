@@ -3,17 +3,14 @@ import { JsonrpcEnd } from '../jsonrpc/jsonrpc-end';
 import { MessageType } from '../message/message-type';
 import { invokeAsPromise } from '../util/invoke-as-promise';
 import { toType } from '../util/to-type';
-import { MessageSender } from 'src/message/message-sender';
-import { MessageReceiver } from 'src/message/message-receiver';
 
-export type InterceptorEnvInfo = { end: JsonrpcEnd; type: MessageType; messageSender?: MessageSender; messageReceiver?: MessageReceiver };
+export type InterceptorEnvInfo = { end: JsonrpcEnd; type: MessageType; sendMessage?: (messageBody: MessageBody) => void };
 
-export type InterceptorSafeContext<T extends { [key: string | number | symbol]: any } = { [key: string | number | symbol]: any }> = T;
-
-export interface Interceptor {
+export type InterceptorSafeContext<T extends object = object> = T;
+export interface Interceptor<C extends object = object> {
   (
     envInfo: InterceptorEnvInfo,
-    safeContext: InterceptorSafeContext,
+    safeContext: InterceptorSafeContext<C>,
   ): ((messageBody: MessageBody) => Promise<MessageBody> | MessageBody | void) | void;
 }
 

@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
-import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
-import { Deferred, JsonrpcEnd, JsonrpcErrorMessage } from '@cec/jsonrpc-client';
+import { getJsonrpcInstance } from '@cec/unit-test-tool';
+import { Deferred, JsonrpcEnd, JsonrpcErrorMessage } from '@cec/jsonrpc-core';
 
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

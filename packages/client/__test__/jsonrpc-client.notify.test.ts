@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
-import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
-import { Deferred, JsonrpcErrorMessage } from '@cec/jsonrpc-server';
+import { getJsonrpcInstance } from '@cec/unit-test-tool';
+import { Deferred, JsonrpcErrorMessage } from '@cec/jsonrpc-core';
 
 describe('notify', () => {
   it('notify normal', async ({ expect }) => {

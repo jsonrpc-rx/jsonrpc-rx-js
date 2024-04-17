@@ -1,5 +1,6 @@
-import { JsonrpcParams } from 'src/jsonrpc/jsonrpc-params';
+import { JsonrpcParams } from '../jsonrpc/jsonrpc-params';
 import { Dispose, IDisposable } from './disposable';
+import { ReturnPromiseEachItem } from '../util/return-promise.type';
 
 export interface Publisher<Value = any> {
   next: (value?: Value) => void;
@@ -19,7 +20,7 @@ export interface ParamsSubject {
    */
   onSubscribe<Params extends JsonrpcParams, PublishValue = any>(
     subjectName: string,
-    subscribeHandler: SubscribeHandler<Params, PublishValue>,
+    subscribeHandler: SubscribeHandler<ReturnPromiseEachItem<Params>, PublishValue>,
   ): IDisposable;
 }
 
