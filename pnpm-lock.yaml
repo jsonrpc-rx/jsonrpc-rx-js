@@ -57,6 +57,16 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1
 
+  interceptors/async-func-params-interceptor:
+    dependencies:
+      '@cec/jsonrpc-core':
+        specifier: workspace:^
+        version: link:../../packages/core
+    devDependencies:
+      '@cec/unit-test-tool':
+        specifier: workspace:^
+        version: link:../../packages/unit-test-tool
+
   packages/client:
     dependencies:
       '@cec/jsonrpc-core':
@@ -66,9 +76,9 @@ importers:
         specifier: ^3.2.9
         version: 3.2.9
     devDependencies:
-      '@cec/jsonrpc-server':
+      '@cec/unit-test-tool':
         specifier: workspace:^
-        version: link:../server
+        version: link:../unit-test-tool
 
   packages/core:
     dependencies:
@@ -85,9 +95,21 @@ importers:
         specifier: ^3.2.9
         version: 3.2.9
     devDependencies:
+      '@cec/unit-test-tool':
+        specifier: workspace:^
+        version: link:../unit-test-tool
+
+  packages/unit-test-tool:
+    devDependencies:
       '@cec/jsonrpc-client':
         specifier: workspace:^
         version: link:../client
+      '@cec/jsonrpc-core':
+        specifier: workspace:^
+        version: link:../core
+      '@cec/jsonrpc-server':
+        specifier: workspace:^
+        version: link:../server
 
 packages:
 
