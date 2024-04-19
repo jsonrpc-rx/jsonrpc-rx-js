@@ -1,5 +1,5 @@
 {
-  "name": "cross-end-call",
+  "name": "jsonrpc-rx-js",
   "version": "1.0.0",
   "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
   "main": "index.js",
