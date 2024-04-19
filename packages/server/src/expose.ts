@@ -1,18 +1,18 @@
 import { Dispose, IJsonrpcServer, Publisher } from '@jsonrpc-rx/core';
 
 export type HandlerConfig = {
-  onCall?: {
+  call?: {
     [method: string]: (...params: any[]) => any;
   };
-  onNotify?: {
+  notify?: {
     [notifyName: string]: (...params: any[]) => void;
   };
-  onSubscribe?: {
+  subscribe?: {
     [subjectName: string]: (publisher: Publisher, ...params: any[]) => Dispose;
   };
 };
 
-const OFF_PREFIX = 'off';
+const OFF_PREFIX = 'remove';
 
 type TO<T> = T;
 
@@ -27,42 +27,42 @@ type ToUnloadSecondStege<T> = TO<{
 const firstUpper = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
 
 export const expose = <R extends HandlerConfig>(jsonrpcServer: IJsonrpcServer, handlerConfig: R): ToUnloadSecondStege<R> => {
-  const onCallList = Object.entries(handlerConfig.onCall ?? {});
-  const onNotifyList = Object.entries(handlerConfig.onNotify ?? {});
-  const onSubscribeList = Object.entries(handlerConfig.onSubscribe ?? {});
+  const onCallList = Object.entries(handlerConfig.call ?? {});
+  const onNotifyList = Object.entries(handlerConfig.notify ?? {});
+  const onSubscribeList = Object.entries(handlerConfig.subscribe ?? {});
 
   const disposes: any = {
-    onCall: {},
-    onNotify: {},
-    onSubscribe: {},
+    call: {},
+    notify: {},
+    subscribe: {},
   };
 
   for (const [method, callHandler] of onCallList) {
-    disposes.onCall[OFF_PREFIX + firstUpper(method)] = jsonrpcServer.onCall(method, callHandler).dispose;
+    disposes.call[OFF_PREFIX + firstUpper(method)] = jsonrpcServer.onCall(method, callHandler).dispose;
   }
 
   for (const [notifyName, notifyHandler] of onNotifyList) {
-    disposes.onNotify[OFF_PREFIX + firstUpper(notifyName)] = jsonrpcServer.onNotify(notifyName, notifyHandler).dispose;
+    disposes.notify[OFF_PREFIX + firstUpper(notifyName)] = jsonrpcServer.onNotify(notifyName, notifyHandler).dispose;
   }
 
   for (const [subjectName, subscribeHandler] of onSubscribeList) {
     const subscribeHandlerWarpper = (publisher: Publisher, ...params: any[]) => {
       return subscribeHandler(publisher, params);
     };
-    disposes.onSubscribe[OFF_PREFIX + firstUpper(subjectName)] = jsonrpcServer.onSubscribe(subjectName, subscribeHandlerWarpper).dispose;
+    disposes.subscribe[OFF_PREFIX + firstUpper(subjectName)] = jsonrpcServer.onSubscribe(subjectName, subscribeHandlerWarpper).dispose;
   }
 
   return disposes;
 };
 
-export const exposeOnCall = <R extends HandlerConfig['onCall']>(jsonrpcServer: IJsonrpcServer, handlerConfig: R): ToUnload<R> => {
-  return expose(jsonrpcServer, { onCall: handlerConfig }).onCall;
+export const exposeCall = <R extends HandlerConfig['call']>(jsonrpcServer: IJsonrpcServer, handlerConfig: R): ToUnload<R> => {
+  return expose(jsonrpcServer, { call: handlerConfig }).call;
 };
 
-export const exposeOnNotify = <R extends HandlerConfig['onNotify']>(jsonrpcServer: IJsonrpcServer, handlerConfig: R): ToUnload<R> => {
-  return expose(jsonrpcServer, { onNotify: handlerConfig }).onNotify;
+export const exposeNotify = <R extends HandlerConfig['notify']>(jsonrpcServer: IJsonrpcServer, handlerConfig: R): ToUnload<R> => {
+  return expose(jsonrpcServer, { notify: handlerConfig }).notify;
 };
 
-export const exposeOnSubscribe = <R extends HandlerConfig['onSubscribe']>(jsonrpcServer: IJsonrpcServer, handlerConfig: R): ToUnload<R> => {
-  return expose(jsonrpcServer, { onSubscribe: handlerConfig }).onSubscribe;
+export const exposeSubscribe = <R extends HandlerConfig['subscribe']>(jsonrpcServer: IJsonrpcServer, handlerConfig: R): ToUnload<R> => {
+  return expose(jsonrpcServer, { subscribe: handlerConfig }).subscribe;
 };
