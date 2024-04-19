@@ -1,5 +1,5 @@
 export interface Dispose {
-  (): void;
+  (onDisposedDid?: () => void): void;
 }
 
 export interface IDisposable {
@@ -12,13 +12,13 @@ export class Disposable implements IDisposable {
   constructor(private callOnDispose: Dispose) {}
 
   static from(...disposes: Dispose[]): IDisposable {
-    return new Disposable(() => {
-      disposes.forEach((item) => item.call({}));
+    return new Disposable((onDisposedDid) => {
+      disposes.forEach((item) => item.call({}, onDisposedDid));
     });
   }
 
-  dispose(): void {
-    if (!this.disposed) this.callOnDispose.call({});
+  dispose(onDisposedDid?: () => void): void {
+    if (!this.disposed) this.callOnDispose(onDisposedDid);
     this.disposed = true;
   }
 }

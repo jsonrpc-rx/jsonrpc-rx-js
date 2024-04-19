@@ -107,7 +107,7 @@ export class JsonrpcClient implements IJsonrpcClient {
     this.msgSenderCtx.send(requestBody);
   };
 
-  subscribe = async <NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): Promise<IDisposable> => {
+  subscribe = <NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): IDisposable => {
     if (!(toType(subjectName) === 'string' && isObserver(observer) && isJsonrpcRequestBodyParams(params))) this.throwInvalidParamsError();
 
     const toSubscribe = (subscribeId: string | number): Dispose => {
@@ -129,15 +129,27 @@ export class JsonrpcClient implements IJsonrpcClient {
     };
 
     const forSubscrible = subjectName + FOR_SUBSCRIBLE_SUFFIX;
-    const subscribeId = await this.call<string | number>(forSubscrible, params);
-    const subscribeDispose = toSubscribe(subscribeId);
-
-    return Disposable.from(subscribeDispose, () => {
-      if (this.subscribeObserverMap.has(subjectName)) {
-        const { observers, disposable } = this.subscribeObserverMap.get(subjectName)!;
-        if (observers.size === 0) disposable.dispose();
-      }
+    let subscribeDispose = () => {};
+    const { promise: subscribeDisposeDefer, resolve: subscribeDisposeResolve } = new Deferred<void>();
+    this.call<string | number>(forSubscrible, params).then((subscribeId) => {
+      subscribeDispose = toSubscribe(subscribeId);
+      subscribeDisposeResolve();
     });
+
+    return Disposable.from(
+      (onDisposedDid) => {
+        subscribeDisposeDefer.then(() => {
+          subscribeDispose();
+          onDisposedDid?.();
+        });
+      },
+      () => {
+        if (this.subscribeObserverMap.has(subjectName)) {
+          const { observers, disposable } = this.subscribeObserverMap.get(subjectName)!;
+          if (observers.size === 0) disposable.dispose();
+        }
+      },
+    );
   };
 
   private receiveMessage() {

@@ -14,7 +14,7 @@ export interface ParamsSubscribable {
    * @param method 订阅名称
    * @param params 订阅参数
    */
-  subscribe<NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): Promise<IDisposable>;
+  subscribe<NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): IDisposable;
 }
 
 export function isObserver(observer: Observer): boolean {
