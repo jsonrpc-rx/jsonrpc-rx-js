@@ -31,3 +31,5 @@ export { invokeAsPromise } from './util/invoke-as-promise';
 export { toType } from './util/to-type';
 export { uuid } from './util/uuid';
 export { ReturnPromise, ReturnPromiseEachItem } from './util/return-promise.type';
+
+export { HandlerConfig } from './proxy/handler-config';

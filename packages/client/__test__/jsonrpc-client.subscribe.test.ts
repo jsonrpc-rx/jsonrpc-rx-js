@@ -22,8 +22,8 @@ describe('subscribe', () => {
       };
     });
     jsonrpcClient.subscribe<string>('hello', {
-      onNext: () => receive01('next'),
-      onComplete: () => receive02('complete'),
+      next: () => receive01('next'),
+      complete: () => receive02('complete'),
     });
 
     const result01 = await promise01;
@@ -55,7 +55,7 @@ describe('subscribe', () => {
       };
     });
 
-    const observer = { onNext: resolve };
+    const observer = { next: resolve };
     jsonrpcClient.subscribe<number>('sum', observer, [2, 3]);
 
     const result = await promise;
@@ -74,9 +74,9 @@ describe('subscribe', () => {
       nextPublishers.push(() => next(a + b));
       return () => {};
     });
-    jsonrpcClient.subscribe<number>('hello', { onNext: resolve01 }, [1, 1]);
-    jsonrpcClient.subscribe<number>('hello', { onNext: resolve02 }, [2, 2]);
-    jsonrpcClient.subscribe<number>('hello', { onNext: resolve03 }, [3, 3]);
+    jsonrpcClient.subscribe<number>('hello', { next: resolve01 }, [1, 1]);
+    jsonrpcClient.subscribe<number>('hello', { next: resolve02 }, [2, 2]);
+    jsonrpcClient.subscribe<number>('hello', { next: resolve03 }, [3, 3]);
 
     await sleep(20);
     nextPublishers.forEach((func) => func());
@@ -90,7 +90,6 @@ describe('subscribe', () => {
   it('subscribe to disposable', async ({ expect }) => {
     const { jsonrpcClient, jsonrpcServer } = getJsonrpcInstance({ delay: 10 });
     const { promise: promise01, resolve: resolve01 } = new Deferred<number>();
-    const { promise: promise02, resolve: resolve02 } = new Deferred<number>();
 
     let count = 0;
     jsonrpcServer.onSubscribe('hello', (publisher) => {
@@ -103,11 +102,8 @@ describe('subscribe', () => {
         count--;
       };
     });
-    const disposable01 = await jsonrpcClient.subscribe<number>('hello', { onNext: resolve01 });
-    const disposable02 = await jsonrpcClient.subscribe<number>('hello', { onNext: resolve02 });
-    disposable01.dispose();
-    disposable02.dispose();
-    await sleep(100);
+    const disposable01 = jsonrpcClient.subscribe<number>('hello', { next: resolve01 });
+    (await disposable01).dispose();
     expect(count).toEqual(0);
   });
 
@@ -129,9 +125,9 @@ describe('subscribe', () => {
       };
     });
     jsonrpcClient.subscribe('hello', {
-      onNext: nextReceive,
-      onError: errorReceive,
-      onComplete: completeReceive,
+      next: nextReceive,
+      error: errorReceive,
+      complete: completeReceive,
     });
 
     const result01 = await nextPromise;

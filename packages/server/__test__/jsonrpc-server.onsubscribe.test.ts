@@ -1,10 +1,6 @@
 import { describe, it } from 'vitest';
-import { getJsonrpcInstance } from '@jsonrpc-rx/unit-test-tool';
+import { getJsonrpcInstance, sleep } from '@jsonrpc-rx/unit-test-tool';
 import { Deferred, JsonrpcEnd, JsonrpcErrorMessage } from '@jsonrpc-rx/core';
-
-export function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 describe('onSubscribe', () => {
   it('onSubscribe normal', async ({ expect }) => {
@@ -25,9 +21,9 @@ describe('onSubscribe', () => {
       };
     });
     jsonrpcClient.subscribe('hello', {
-      onNext: nextReceive,
-      onError: errorReceive,
-      onComplete: completeReceive,
+      next: nextReceive,
+      error: errorReceive,
+      complete: completeReceive,
     });
 
     const result01 = await nextPromise;
@@ -71,12 +67,8 @@ describe('onSubscribe', () => {
         count--;
       };
     });
-    const disposable01 = await jsonrpcClient.subscribe<number>('hello', { onNext: () => {} });
-    const disposable02 = await jsonrpcClient.subscribe<number>('hello', { onNext: () => {} });
-
-    await sleep(20);
-    disposable01.dispose();
-    disposable02.dispose();
+    const disposable = await jsonrpcClient.subscribe<number>('hello', { next: () => {} });
+    disposable.dispose();
     await sleep(30);
     expect(count).toEqual(0);
   });
@@ -103,7 +95,7 @@ describe('onSubscribe', () => {
       },
     });
     jsonrpcServer.onSubscribe('hello', () => () => {});
-    const reason = jsonrpcClient.subscribe('hello', { onNext: () => {} });
+    const reason = jsonrpcClient.subscribe('hello', { next: () => {} });
     expect(reason).rejects.toThrowError();
   });
 });

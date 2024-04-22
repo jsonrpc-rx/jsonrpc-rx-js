@@ -3,20 +3,20 @@ import { describe, it } from 'vitest';
 
 describe('isObserver normal', async () => {
   const observer01: Observer = {
-    onNext: (value) => {},
-    onError: (error) => {},
-    onComplete: () => {},
+    next: (value) => {},
+    error: (error) => {},
+    complete: () => {},
   };
   const observer02 = {
-    onNext: (value) => {},
+    next: (value) => {},
   };
   const observer03: Observer = {
-    onNext: (value) => {},
-    onError: (error) => {},
+    next: (value) => {},
+    error: (error) => {},
   };
   const observer04: Observer = {
-    onNext: (value) => {},
-    onComplete: () => {},
+    next: (value) => {},
+    complete: () => {},
   };
 
   it('isObserver normal 01', ({ expect }) => expect(isObserver(observer01)).toBeTruthy());
@@ -28,14 +28,14 @@ describe('isObserver normal', async () => {
 describe('isObserver error', async () => {
   const observer01: any = {};
   const observer02: any = {
-    onError: (error) => {},
-    onComplete: () => {},
+    error: (error) => {},
+    complete: () => {},
   };
   const observer03: any = {
-    onError: (error) => {},
+    error: (error) => {},
   };
   const observer04: any = {
-    onComplete: () => {},
+    complete: () => {},
   };
 
   it('isObserver error 01', ({ expect }) => expect(isObserver(observer01)).toBeFalsy());

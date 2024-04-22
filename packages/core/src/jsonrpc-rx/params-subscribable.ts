@@ -3,9 +3,9 @@ import { toType } from '../util/to-type';
 import { IDisposable } from './disposable';
 
 export interface Observer<T = any> {
-  onNext: (value: T) => void;
-  onError?: (error: any) => void;
-  onComplete?: () => void;
+  next: (value: T) => void;
+  error?: (error: any) => void;
+  complete?: () => void;
 }
 
 export interface ParamsSubscribable {
@@ -14,16 +14,16 @@ export interface ParamsSubscribable {
    * @param method 订阅名称
    * @param params 订阅参数
    */
-  subscribe<NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): IDisposable;
+  subscribe<NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): Promise<IDisposable>;
 }
 
 export function isObserver(observer: Observer): boolean {
-  const { onNext, onError, onComplete } = observer ?? {};
+  const { next, error, complete } = observer ?? {};
 
   return (
     toType(observer) === 'object' &&
-    toType(onNext) === 'function' &&
-    (toType(onError) === 'function' || onError == null) &&
-    (toType(onComplete) === 'function' || onComplete == null)
+    toType(next) === 'function' &&
+    (toType(error) === 'function' || error == null) &&
+    (toType(complete) === 'function' || complete == null)
   );
 }

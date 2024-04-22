@@ -107,7 +107,7 @@ export class JsonrpcClient implements IJsonrpcClient {
     this.msgSenderCtx.send(requestBody);
   };
 
-  subscribe = <NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): IDisposable => {
+  subscribe = async <NextValue>(subjectName: string, observer: Observer<NextValue>, params: JsonrpcParams): Promise<IDisposable> => {
     if (!(toType(subjectName) === 'string' && isObserver(observer) && isJsonrpcRequestBodyParams(params))) this.throwInvalidParamsError();
 
     const toSubscribe = (subscribeId: string | number): Dispose => {
@@ -129,27 +129,15 @@ export class JsonrpcClient implements IJsonrpcClient {
     };
 
     const forSubscrible = subjectName + FOR_SUBSCRIBLE_SUFFIX;
-    let subscribeDispose = () => {};
-    const { promise: subscribeDisposeDefer, resolve: subscribeDisposeResolve } = new Deferred<void>();
-    this.call<string | number>(forSubscrible, params).then((subscribeId) => {
-      subscribeDispose = toSubscribe(subscribeId);
-      subscribeDisposeResolve();
-    });
+    const subscribeId = await this.call<string | number>(forSubscrible, params);
+    const subscribeDispose = toSubscribe(subscribeId);
 
-    return Disposable.from(
-      (onDisposedDid) => {
-        subscribeDisposeDefer.then(() => {
-          subscribeDispose();
-          onDisposedDid?.();
-        });
-      },
-      () => {
-        if (this.subscribeObserverMap.has(subjectName)) {
-          const { observers, disposable } = this.subscribeObserverMap.get(subjectName)!;
-          if (observers.size === 0) disposable.dispose();
-        }
-      },
-    );
+    return Disposable.from(subscribeDispose, () => {
+      if (this.subscribeObserverMap.has(subjectName)) {
+        const { observers, disposable } = this.subscribeObserverMap.get(subjectName)!;
+        if (observers.size === 0) disposable.dispose();
+      }
+    });
   };
 
   private receiveMessage() {
@@ -184,17 +172,17 @@ export class JsonrpcClient implements IJsonrpcClient {
     switch (state) {
       case SubscribleResultSatate.Next:
         for (const { subscribeId, subscribeValue } of data) {
-          observers.get(subscribeId)?.onNext.call({}, subscribeValue);
+          observers.get(subscribeId)?.next.call({}, subscribeValue);
         }
         break;
       case SubscribleResultSatate.Error:
         for (const { subscribeId, subscribeError } of error) {
-          observers.get(subscribeId)?.onError?.call({}, subscribeError);
+          observers.get(subscribeId)?.error?.call({}, subscribeError);
         }
         break;
       case SubscribleResultSatate.Complete:
         for (const { subscribeId } of data) {
-          observers.get(subscribeId)?.onComplete?.call({});
+          observers.get(subscribeId)?.complete?.call({});
           observers.delete(subscribeId);
           if (observers.size === 0) {
             disposable?.dispose();

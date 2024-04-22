@@ -79,15 +79,17 @@ describe('asyncFuncParamsInterceptor for subscribe', () => {
     jsonrpcClient.subscribe<number>(
       'hello',
       {
-        onNext: (value) => {
+        next: (value) => {
           state = value;
           expect(state).toEqual(2);
         },
       },
-      [(value) => {
-        state = value;
-        expect(state).toEqual(1);
-      }],
+      [
+        (value) => {
+          state = value;
+          expect(state).toEqual(1);
+        },
+      ],
     );
     await sleep(200);
   });
