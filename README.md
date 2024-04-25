@@ -6,7 +6,7 @@ A tool library for RPC communication based on [JSON-RPC 2.0](https://www.jsonrpc
 
 在所有的通信场景中，两端的信息交换的过程，无非就是一端发送，另一端接收，反之亦然。jsonrpc-rx 不关注两端具体的发送和接收的具体实现，而是将其抽象为**发送者**和**接受者**，在此基础上实现了 JSON-RPC 2.0 的**方法调用**和响应式编程的**主题订阅**。
 
-![](C:\Users\zy\Pictures\Camera Roll\jsonrpc-rx.png)
+![](https://raw.githubusercontent.com/jsonrpc-rx/jsonrpc-rx-js/main/documents/images/jsonrpc-rx.png)
 
 这样的方式，使得 jsonrpc-rx 具有**通用性**。试想一下，在不同的场景，无论是基于 postMessage 或是 Websocket，只需要提供具体的 MessageSender 和 MessageReceiver，都可以无缝地使用 jsonrpc-rx 。
 
@@ -233,9 +233,9 @@ remote.subscribe.tick({
 
 使用时与直接使用 handlers 几乎无异，只是有的原本同步方法变成了异步调用，可以直接享受到 `handlers` 类型提示。
 
-![image-20240423113258395](C:\Users\zy\AppData\Roaming\Typora\typora-user-images\image-20240423113258395.png)
+![image-20240423113258395](https://raw.githubusercontent.com/jsonrpc-rx/jsonrpc-rx-js/main/documents/images/handlers_tips_01.png)
 
-![image-20240423113513993](C:\Users\zy\AppData\Roaming\Typora\typora-user-images\image-20240423113513993.png)
+![image-20240423113513993](https://raw.githubusercontent.com/jsonrpc-rx/jsonrpc-rx-js/main/documents/images/handlers_tips_02.png)
 
 
 
