@@ -1,8 +1,8 @@
 {
   "name": "@jsonrpc-rx/server",
-  "version": "0.0.1",
-  "author": "cross-end-call",
-  "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
+  "version": "0.0.1-beta",
+  "author": "jsonrpc-rx",
+  "description": "A tool library for RPC based on JSON-RPC 2.0 and Reactive Programming",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "typings": "./dist/index.d.ts",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/cross-end-call/jsonrpc-rx.git"
+    "url": "git+ssh://git@github.com/jsonrpc-rx/jsonrpc-rx-js.git"
   },
   "scripts": {
     "test": "vitest",
@@ -27,10 +27,10 @@
     "clean": "rimraf dist/ & rimraf node_modules/"
   },
   "dependencies": {
-    "@jsonrpc-rx/core": "workspace:^",
+    "@jsonrpc-rx/core": "0.0.1",
     "flatted": "^3.2.9"
   },
   "devDependencies": {
-    "@jsonrpc-rx/unit-test-tool": "workspace:^"
+    "@jsonrpc-rx/unit-test-tool": "0.0.1"
   }
 }

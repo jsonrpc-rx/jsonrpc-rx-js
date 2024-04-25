@@ -92,14 +92,14 @@ importers:
   packages/server:
     dependencies:
       '@jsonrpc-rx/core':
-        specifier: workspace:^
+        specifier: 0.0.1
         version: link:../core
       flatted:
         specifier: ^3.2.9
         version: 3.2.9
     devDependencies:
       '@jsonrpc-rx/unit-test-tool':
-        specifier: workspace:^
+        specifier: 0.0.1
         version: link:../unit-test-tool
 
   packages/unit-test-tool:
@@ -145,6 +145,7 @@ packages:
   /@babel/highlight@7.24.2:
     resolution: {integrity: sha512-Yac1ao4flkTxTteCDZLEvdxg2fZfz1v8M4QpaGypq/WPDqg3ijHYbDfs+LG5hvzSoqaSZ9/Z9lKSP3CjZjv+pA==}
     engines: {node: '>=6.9.0'}
+    requiresBuild: true
     dependencies:
       '@babel/helper-validator-identifier': 7.22.20
       chalk: 2.4.2
