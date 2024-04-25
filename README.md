@@ -36,9 +36,9 @@ npm install --save @jsonrpc-rx/core
 
 ## 例子
 
-[全部示例](https://github.com/jsonrpc-rx/jsonrpc-rx-samples)
+[全部例子](https://github.com/jsonrpc-rx/jsonrpc-rx-samples)
 - [webworker-ts-webpack](https://github.com/jsonrpc-rx/jsonrpc-rx-samples/tree/main/packages/webworker-ts-webpack): webworker + ts + webpack 的实现
-loading...
+- 更多例子 loading...
 
 
 
