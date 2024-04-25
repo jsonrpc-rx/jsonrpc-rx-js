@@ -2,7 +2,7 @@
   "name": "@jsonrpc-rx/async-func-params-interceptor",
   "version": "0.0.1",
   "author": "jsonrpc-rx",
-  "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
+  "description": "The interceptor allows using function as parameter in jsonrpc-rx",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "typings": "./dist/index.d.ts",
@@ -27,7 +27,7 @@
     "clean": "rimraf dist/ & rimraf node_modules/"
   },
   "dependencies": {
-    "@jsonrpc-rx/core": "workspace:^"
+    "@jsonrpc-rx/core": "0.0.1"
   },
   "devDependencies": {
     "@jsonrpc-rx/unit-test-tool": "workspace:^"
