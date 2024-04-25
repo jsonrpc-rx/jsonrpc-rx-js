@@ -40,7 +40,7 @@ npm install --save @jsonrpc-rx/core
 
 ### web worker
 
-- webworker + ts + webpack 的实现：https://github.com/jsonrpc-rx/jsonrpc-rx-samples/tree/main/packages/webworker-ts-webpack
+- [webworker-ts-webpack](https://github.com/jsonrpc-rx/jsonrpc-rx-samples/tree/main/packages/webworker-ts-webpack): webworker + ts + webpack 的实现
 
 ### vscode extension
 
