@@ -1,103 +1,64 @@
 # jsonrpc-rx
 
-A tool library for RPC communication based on [JSON-RPC 2.0](https://www.jsonrpc.org/specification) and [Reactive Programming](https://www.reactive-streams.org/)
+A tool library for RPC communication based on [JSON-RPC 2.0](https://www.jsonrpc.org/specification) and Reactive Programming
 
-一个基于 [JSON-RPC 2.0](https://www.jsonrpc.org/specification)  和 [响应式编程](https://www.reactive-streams.org/) 用于 RPC 通讯的工具库
+一个基于 [JSON-RPC 2.0](https://www.jsonrpc.org/specification)  和 响应式编程 用于 RPC 通讯的工具库。
 
+在所有的通信场景中，两端的信息交换的过程，无非就是一端发送，另一端接收，反之亦然。jsonrpc-rx 不关注两端具体的发送和接收的具体实现，而是将其抽象为**发送者**和**接受者**，在此基础上实现了 JSON-RPC 2.0 的**方法调用**和响应式编程的**主题订阅**。
 
+![](C:\Users\zy\Pictures\Camera Roll\jsonrpc-rx.png)
 
-## 介绍
+这样的方式，使得 jsonrpc-rx 具有**通用性**。试想一下，在不同的场景，无论是基于 postMessage 或是 Websocket，只需要提供具体的 MessageSender 和 MessageReceiver，都可以无缝地使用 jsonrpc-rx 。
 
-为什么要写 jsonrpc-rx ?
+jsonrpc-rx 将库分为三个部分：
 
-首先，这个工具的适用于可进行全双工通讯的场景如：
+**server**
 
-- 基于 postMessage 的通讯：iframe、 Web Worker 、 Vscode extension 等；
-- 基于 websocket 的通讯；
-
-这些场景的问题各有不同，而  jsonrpc-rx 能将这些实现 “**归一化**”。我们看个简单的示例——Web Worker 和 window 之间的通讯。
-
-**传统的方式：**
-
-```js
-// parent.js
-const worker = new Worker('worker.js');
-worker.addEventListener('message', function (event) {
-    const data = event.data;
-    if (data.event === 'do_something') {
-        // ... handle worker data
-        worker.postMessage({
-            event: 're:do_something',
-            data: 'some data',
-        });
-    }
-});
-
-// worker.js
-self.postMessage({
-    event: 'do_something',
-    data: 'worker data',
-});
-self.addEventListener('message', function (event) {
-    const data = event.data;
-    if (data.event === 're:do_something') {
-        // ... handle parent data
-    }
-});
+```bash
+npm install --save @jsonrpc-rx/server
 ```
 
-**基于 jsonrpc-rx 的方式：** 
+**client**
 
-```js
-// parent.js
-import { JsonrpcServer } from '@jsonrpc-rx/server';
-
-const worker = new Worker('worker.js');
-const messageSender = (msg) => worker.postMessage(msg); // 信息发送者
-const messageReceiver = (handler) => worker.addEventListener('message', (evt) => handler(evt.data)); // 信息接受者
-
-const server = new JsonrpcServer(messageSender, messageReceiver);
-server.onCall('do_something', (someData) => { // onCall: 声明被调用的方法 do_something
-     // ... handle worker data and return result
-    return ...;
-});
-
-// worker.js
-import { JsonrpcClient } from '@jsonrpc-rx/client'
-
-const messageSender = (msg) => self.postMessage(msg); // 信息发送者
-const messageReceiver = (handler) => self.addEventListener('message', (evt) => handler(evt.data)); // 信息接受者
-
-const client = new JsonrpcClient(messageSender, messageReceiver);
-const result = await client.call('do_something', 'some data'); // call: 调用方法 do_something
-// ... handle parent data
+```bash
+npm install --save @jsonrpc-rx/client
 ```
 
+**core**
 
-
-其实，**messageSender** 和 **messageReceiver** 才是具体的场景下的差异点，所有的通讯行为，在两端，只需要实现 messageSender 和 messageReceiver，就可以使用  jsonrpc-rx 的能力。所以 ，**jsonrpc-rx 范式**可以归纳为：
-
-```js
-// server end
-const messageSender = (msg) => ...;
-const messageReceiver = (handler) => ...;
-const server = new JsonrpcServer(messageSender, messageReceiver);
-server.onCall('do_something', (params) => { ... });
-
-// client end
-const messageSender = (msg) => ...;
-const messageReceiver = (handler) => ...;
-const client = new JsonrpcClient(messageSender, messageReceiver);
-const result = await client.call('do_something', params);
+```bash
+npm install --save @jsonrpc-rx/core
 ```
 
-在上面的代码中，jsonrpc-rx 展示了两端的代码，即 server-client ，实际上，jsonrpc-rx 将两端的代码分开的，可以分别使用。除了上述的 **call （调用模式）**，jsonrpc-rx 还有 **notify（通知模式**），**subscribe（订阅模式）**。下面将逐一介绍：
+这里的 server 不是狭义上的 web server，我们更倾向于将其理解为能力的提供方，同样的， client 可理解为能力的消费方。core 库的可以用于 jsonrpc-rx 自定义拦截器的编写。
+
+
+
+## 例子
+
+[全部示例](https://github.com/jsonrpc-rx/jsonrpc-rx-samples)
+
+### web worker
+
+- webworker + ts + webpack 的实现：https://github.com/jsonrpc-rx/jsonrpc-rx-samples/tree/main/packages/webworker-ts-webpack
+
+### vscode extension
+
+loading...
+
+### iframe
+
+loading...
+
+### websocket 
+
+loading...
 
 
 
 ## 特性
 
-**注意：** 下面特性的的代码都是伪代码，不能直接运行，但是[例子](#1.3)中都是可以运行的实例，且涉及特性中的所有内容。所以建议在阅读特性时可以找一个自己熟悉的示例对照着看
+**注意：** 下面特性的的代码都是伪代码，不能直接运行，但是[例子](https://github.com/jsonrpc-rx/jsonrpc-rx-samples)中都是可以运行的实例，且涉及特性中的所有内容。所以建议在阅读特性时可以找一个自己熟悉的示例对照着看
 
 
 
@@ -149,6 +110,8 @@ onNotify: (notifyName: string, notifyHandler: (params?: JsonrpcParams) => void) 
 >通知 ——  没有返回值， 所以 client 端通知之后，不能获知是否通知成功
 >
 >调用 —— 以 Promise 的方式返回值，返回值可为空，即使不成功，也会获知错误信息
+
+
 
 ### 支持响应式
 
@@ -210,6 +173,8 @@ client.subscribe('some_subject', { // subscribe: 订阅主题 some_subject
 });
 ```
 
+
+
 ### 类型提示友好
 
 类似于 [Comlink](https://github.com/GoogleChromeLabs/comlink) ，jsonrpc-rx 也提供了 proxy 的方式来支持更友好的声明和调用，如：
@@ -263,14 +228,16 @@ remote.notify.hello(); // 'hello jsonrpc-rx'
 remote.subscribe.tick({
   	next: (message) => { ... },
     complete: () => { ... },
-}); // '1' ---- '1' ---- '1' ---- 'complete'
+}); // '1' ---- '1' ---- '1' ---- '1'---...
 ```
 
-使用时与直接使用 handlers 几乎无异，只是原本同步方法都变成了异步调用，可以直接享受到 `handlers` 类型提示。
+使用时与直接使用 handlers 几乎无异，只是有的原本同步方法变成了异步调用，可以直接享受到 `handlers` 类型提示。
 
 ![image-20240423113258395](C:\Users\zy\AppData\Roaming\Typora\typora-user-images\image-20240423113258395.png)
 
 ![image-20240423113513993](C:\Users\zy\AppData\Roaming\Typora\typora-user-images\image-20240423113513993.png)
+
+
 
 ### 支持拦截器
 
@@ -309,6 +276,8 @@ const jsonrpcClient = new JsonrpcClient(messageSender, messageReceiver, { interc
 
 上述代码中的 **safeContext**，为同一个端（server 或 client）请求和响应拦截器提供了一个**公共的上下文**，这让拦截器的功能变得更加的强大。jsonrpc-rx 提供了一个实现参数可为 Function 类型的插件，便是用到了这个功能，[源码](https://github.com/jsonrpc-rx/jsonrpc-rx-js/blob/main/interceptors/async-func-params-interceptor/src/index.ts)可见。
 
+
+
 ### 支持 Function 类型参数
 
 参数可为 Function 类型是由拦截器——`@jsonrpc-rx/async-func-params-interceptor` 实现的，如果使用该插件，就可以实现 call、notify、subscribe 的 Function 类型参数传递，如：
@@ -340,20 +309,6 @@ const sum = await remote.math(add); // 3
 
 
 
-## 示例
-
-### vscode extension
-
-loading...
-
-### iframe
-
-loading...
-
-### web worker
-
-loading...
-
-### websocket 
+## API
 
 loading...
