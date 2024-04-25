@@ -1,8 +1,8 @@
 {
   "name": "@jsonrpc-rx/client",
-  "version": "0.0.1",
+  "version": "0.0.1-beta",
   "author": "jsonrpc-rx",
-  "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
+  "description": "A tool library for RPC based on JSON-RPC 2.0 and Reactive Programming",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "typings": "./dist/index.d.ts",
@@ -27,10 +27,10 @@
     "clean": "rimraf dist/ & rimraf node_modules/"
   },
   "dependencies": {
-    "@jsonrpc-rx/core": "workspace:^",
+    "@jsonrpc-rx/core": "0.0.1",
     "flatted": "^3.2.9"
   },
   "devDependencies": {
-    "@jsonrpc-rx/unit-test-tool": "workspace:^"
+    "@jsonrpc-rx/unit-test-tool": "0.0.1"
   }
 }
