@@ -2,7 +2,7 @@
   "name": "@jsonrpc-rx/core",
   "version": "0.0.1",
   "author": "jsonrpc-rx",
-  "description": "JS/TS implementation of jsonrpc 2.0, with additional RX features",
+  "description": "A tool library for RPC based on JSON-RPC 2.0 and Reactive Programming",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "typings": "./dist/index.d.ts",
