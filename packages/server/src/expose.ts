@@ -27,17 +27,20 @@ export const expose = <R extends HandlerConfig>(jsonrpcServer: IJsonrpcServer, h
 
   for (const [method, callHandler] of onCallList) {
     const callWrapper = (params: JsonrpcParams) => callHandler(...(params as any[]));
-    disposes.call[REMOVE_PREFIX + firstUpper(method)] = jsonrpcServer.onCall(method, callWrapper).dispose;
+    const disposable = jsonrpcServer.onCall(method, callWrapper);
+    disposes.call[REMOVE_PREFIX + firstUpper(method)] = disposable.dispose.bind(disposable);
   }
 
   for (const [notifyName, notifyHandler] of onNotifyList) {
     const notifyWrapper = (params: JsonrpcParams) => notifyHandler(...(params as any[]));
-    disposes.notify[REMOVE_PREFIX + firstUpper(notifyName)] = jsonrpcServer.onNotify(notifyName, notifyWrapper).dispose;
+    const disposable = jsonrpcServer.onNotify(notifyName, notifyWrapper);
+    disposes.notify[REMOVE_PREFIX + firstUpper(notifyName)] = disposable.dispose.bind(disposable);
   }
 
   for (const [subjectName, subscribeHandler] of onSubscribeList) {
     const subscribeWarpper = (publisher: Publisher, params: JsonrpcParams) => subscribeHandler(publisher, ...(params as any[]));
-    disposes.subscribe[REMOVE_PREFIX + firstUpper(subjectName)] = jsonrpcServer.onSubscribe(subjectName, subscribeWarpper).dispose;
+    const disposable = jsonrpcServer.onSubscribe(subjectName, subscribeWarpper);
+    disposes.subscribe[REMOVE_PREFIX + firstUpper(subjectName)] = disposable.dispose.bind(disposable);
   }
 
   return disposes;
