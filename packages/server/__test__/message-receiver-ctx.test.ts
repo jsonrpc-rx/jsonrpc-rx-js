@@ -46,7 +46,7 @@ describe('MessageReceiverCtx error', async () => {
   it('MessageReceiverCtx error receive null', ({ expect }) => expect(receiveRequestBody).toBeUndefined());
 });
 
-describe('MessageReceiverCtx ResponseInterceptor', async () => {
+describe('MessageReceiverCtx ReceiveInterceptor', async () => {
   let messageHandler: MessageHandler;
   const messageReceiver: MessageReceiver = (handler) => (messageHandler = handler);
 
@@ -82,7 +82,7 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
   const requestBody01: JsonrpcRequestBody = { jsonrpc: '2.0', id: 'xxx', method: 'xxx' };
   const changedRequestBody01: JsonrpcRequestBody = { jsonrpc: '2.0', id: 'xxx', method: 'xxx', params: [1, 2, 3] };
   messageHandler!(stringify(requestBody01));
-  it('MessageReceiverCtx ResponseInterceptor change value', ({ expect }) => {
+  it('MessageReceiverCtx ReceiveInterceptor change value', ({ expect }) => {
     expect(changedRequestBody01).toStrictEqual(receiveRequestBody01);
   });
 
@@ -94,7 +94,7 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
     receiveRequestBody02 = requestBody as JsonrpcRequestBody;
   });
   messageHandler!(stringify({ jsonrpc: '2.0', id: 'xxx', method: 'xxx' }));
-  it('MessageReceiverCtx ResponseInterceptor with null', ({ expect }) => {
+  it('MessageReceiverCtx ReceiveInterceptor with null', ({ expect }) => {
     expect(receiveRequestBody02).toBeUndefined();
   });
 
@@ -106,13 +106,13 @@ describe('MessageReceiverCtx ResponseInterceptor', async () => {
     receiveRequestBody03 = requestBody;
   });
   messageHandler!(stringify({ jsonrpc: '2.0', id: 'xxx', method: 'xxx' }));
-  it('MessageReceiverCtx ResponseInterceptor occur error 01', ({ expect }) => {
+  it('MessageReceiverCtx ReceiveInterceptor occur error 01', ({ expect }) => {
     expect(receiveRequestBody03.error.code).toEqual(JsonrpcErrorCode.ServerError);
   });
 
   const messageReceiverCtx04 = new MessageReceiverCtx(messageReceiver, []);
   messageReceiverCtx04.receive(() => {});
-  it('MessageReceiverCtx ResponseInterceptor occur error 02', ({ expect }) => {
+  it('MessageReceiverCtx ReceiveInterceptor occur error 02', ({ expect }) => {
     expect(messageHandler!('{ "jsonrpc": "2.0",')).rejects.toThrowError();
   });
 });

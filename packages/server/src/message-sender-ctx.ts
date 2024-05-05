@@ -53,7 +53,7 @@ export class MessageSenderCtx {
         jsonrpc: '2.0',
         error: {
           code: JsonrpcErrorCode.ServerError,
-          message: 'the response interceptors throw error in server end',
+          message: 'the receive interceptors throw error in server end',
           data: error.stack,
         },
       };

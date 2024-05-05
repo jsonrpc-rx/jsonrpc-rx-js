@@ -58,7 +58,7 @@ export class MessageReceiverCtx {
           jsonrpc: '2.0',
           error: {
             code: JsonrpcErrorCode.ServerError,
-            message: 'the request interceptors throw error in server end',
+            message: 'the send interceptors throw error in server end',
             data: error.stack ?? error.toString(),
           },
         } as JsonrpcResponseBody;

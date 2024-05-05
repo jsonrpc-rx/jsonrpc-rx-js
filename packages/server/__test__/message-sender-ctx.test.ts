@@ -31,7 +31,7 @@ describe('MessageSenderCtx error', () => {
   });
 });
 
-describe('MessageSenderCtx RequestInterceptor', async () => {
+describe('MessageSenderCtx SendInterceptor', async () => {
   const interceptor01: Interceptor = (envInfo) => {
     if ((envInfo.type = MessageType.Response)) {
       return (responseBody) => {
@@ -70,7 +70,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
     interceptors: [interceptor01, interceptor02],
   });
   messageSenderCtx01.send(messageBody);
-  it('MessageSenderCtx RequestInterceptor change value', ({ expect }) => {
+  it('MessageSenderCtx SendInterceptor change value', ({ expect }) => {
     expect(stringify(messageBodyFilted)).toStrictEqual(sendMessage01);
   });
 
@@ -79,7 +79,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
     interceptors: [interceptor01, interceptor02, interceptor04],
   });
   messageSenderCtx02.send(messageBody);
-  it('MessageSenderCtx RequestInterceptor in void', async ({ expect }) => {
+  it('MessageSenderCtx SendInterceptor in void', async ({ expect }) => {
     await expect(sendMessage02).toEqual('');
   });
 
@@ -88,7 +88,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
     interceptors: [interceptor01, interceptor02, interceptor03],
   });
   messageSenderCtx03.send(messageBody);
-  it('MessageSenderCtx RequestInterceptor occur error 01', async ({ expect }) => {
+  it('MessageSenderCtx SendInterceptor occur error 01', async ({ expect }) => {
     await expect(parse(sendMessage03)?.error?.code).toEqual(JsonrpcErrorCode.ServerError);
   });
 });

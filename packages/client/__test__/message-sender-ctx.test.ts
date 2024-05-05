@@ -18,7 +18,7 @@ describe('MessageSenderCtx normal', () => {
   it('MessageSenderCtx normal 01', ({ expect }) => expect(stringify(messageBody)).toStrictEqual(sendMessage));
 });
 
-describe('MessageSenderCtx RequestInterceptor', async () => {
+describe('MessageSenderCtx SendInterceptor', async () => {
   const interceptor01: Interceptor = (envInfo) => {
     if (envInfo.type === MessageType.Request) {
       return (requestBody) => {
@@ -61,7 +61,7 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
     interceptors: [interceptor01, interceptor02],
   });
   messageSenderCtx01.send(messageBody);
-  it('MessageSenderCtx RequestInterceptor change value', ({ expect }) => {
+  it('MessageSenderCtx SendInterceptor change value', ({ expect }) => {
     expect(stringify(messageBodyFilted)).toStrictEqual(sendMessage01);
   });
 
@@ -70,19 +70,19 @@ describe('MessageSenderCtx RequestInterceptor', async () => {
     interceptors: [interceptor01, interceptor02, interceptor04],
   });
   messageSenderCtx03.send(messageBody);
-  it('MessageSenderCtx RequestInterceptor in void', async ({ expect }) => {
+  it('MessageSenderCtx SendInterceptor in void', async ({ expect }) => {
     await expect(sendMessage03).toEqual('');
   });
 
   const messageSenderCtx02 = new MessageSenderCtx(() => {}, [{}, {}, {}], {
     interceptors: [interceptor01, interceptor02, interceptor03],
   });
-  it('MessageSenderCtx RequestInterceptor occur error 01', async ({ expect }) => {
+  it('MessageSenderCtx SendInterceptor occur error 01', async ({ expect }) => {
     await expect(messageSenderCtx02.send(messageBody)).rejects.toThrowError();
   });
 
   const messageSenderCtx04 = new MessageSenderCtx(() => {}, []);
-  it('MessageSenderCtx RequestInterceptor occur error 02', ({ expect }) => {
+  it('MessageSenderCtx SendInterceptor occur error 02', ({ expect }) => {
     expect(
       messageSenderCtx04.send({
         jsonrpc: '2.0',

@@ -89,7 +89,7 @@ describe('onSubscribe', () => {
         interceptors: [
           (envInfo) => {
             if (envInfo.end === JsonrpcEnd.Server) {
-              return () => Promise.reject('requestInterceptor error');
+              return () => Promise.reject('SendInterceptor error');
             }
           },
         ],
