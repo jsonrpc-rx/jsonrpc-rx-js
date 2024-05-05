@@ -34,3 +34,4 @@ export { Promisify, PromisifyReturnEach, PromisifyReturn } from './util/promisif
 export { IsNotStrictAny, IsStrictAny, IsStrictVoid, IsVoid } from './util/is.type';
 
 export { HandlerConfig } from './expose/handler-config';
+export { INNER_ONCALL_FOR_QUERY_MODE, ExposeMode } from './expose/query-mode';

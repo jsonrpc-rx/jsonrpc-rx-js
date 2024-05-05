@@ -11,7 +11,7 @@ type TypeMapper<T extends { [key: string]: any }> = To<{
 export const wrap = <T extends HandlerConfig>(jsonrpcClient: JsonrpcClient): TypeMapper<T> => {
   const proxyHandler: ProxyHandler<object> = {
     get: function (target, prop: string) {
-      return (...params: any[]) => jsonrpcClient.$unify(prop, params);
+      return (...params: any[]) => jsonrpcClient._unify(prop, params);
     },
   };
   return new Proxy({}, proxyHandler) as any;

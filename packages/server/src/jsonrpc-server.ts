@@ -28,6 +28,8 @@ import {
   JsonrpcBaseConfig,
   JsonrpcCostomError,
   PromisifyReturnEach,
+  INNER_ONCALL_FOR_QUERY_MODE,
+  ExposeMode,
 } from '@jsonrpc-rx/core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -55,20 +57,7 @@ export class JsonrpcServer implements IJsonrpcServer {
     this.msgSenderCtx = new MessageSenderCtx(this.msgSender, interceptorSafeContextArr, this.jsonrpcBaseConfig);
     this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, interceptorSafeContextArr, this.jsonrpcBaseConfig);
     this.receiveMessage();
-
-    this.onCall('inner_oncall_for_query_mode', ([queryName]: string[]) => {
-      let mode = '';
-      if (this.notifyHandlerMap.has(queryName)) {
-        mode = 'notify';
-      } else if (this.callHandlerMap.has(queryName)) {
-        mode = 'call';
-      } else if (this.onSubscribeSubjectSet.has(queryName)) {
-        mode = 'subscribe';
-      } else {
-        this.throwParamsInternalError(`the method ${queryName} is repeated`);
-      }
-      return mode;
-    });
+    this.onCallForQueryMode();
   }
 
   onCall = <Params extends JsonrpcParams>(method: string, callHandler: (params: PromisifyReturnEach<Params>) => any): IDisposable => {
@@ -181,6 +170,22 @@ export class JsonrpcServer implements IJsonrpcServer {
       ...Array.from(onSubscribeCancelMap.values()),
       () => this.onSubscribeSubjectSet.delete(subjectName),
     );
+  }
+
+  private onCallForQueryMode() {
+    this.onCall(INNER_ONCALL_FOR_QUERY_MODE, ([queryName]: string[]) => {
+      let mode: ExposeMode = 'call';
+      if (this.notifyHandlerMap.has(queryName)) {
+        mode = 'notify';
+      } else if (this.callHandlerMap.has(queryName)) {
+        mode = 'call';
+      } else if (this.onSubscribeSubjectSet.has(queryName)) {
+        mode = 'subscribe';
+      } else {
+        this.throwParamsInternalError(`the method ${queryName} is repeated`);
+      }
+      return mode;
+    });
   }
 
   private receiveMessage() {
