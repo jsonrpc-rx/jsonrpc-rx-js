@@ -1,7 +1,8 @@
 import { it, describe } from 'vitest';
+import { Interceptor } from '@jsonrpc-rx/core';
 import { asyncFuncParamsInterceptor } from '../src';
-import { getJsonrpcInstance, sleep } from '@jsonrpc-rx/unit-test-tool';
-import { Deferred, Interceptor } from '@jsonrpc-rx/core';
+import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
+import { sleep } from './util/sleep';
 
 const afpInterceptor = asyncFuncParamsInterceptor as Interceptor<object>;
 

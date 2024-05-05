@@ -30,6 +30,7 @@ export { Deferred } from './util/deferred';
 export { invokeAsPromise } from './util/invoke-as-promise';
 export { toType } from './util/to-type';
 export { uuid } from './util/uuid';
-export { ReturnPromise, ReturnPromiseEachItem } from './util/return-promise.type';
+export { Promisify, PromisifyReturnEach, PromisifyReturn } from './util/promisify.type';
+export { IsNotStrictAny, IsStrictAny, IsStrictVoid, IsVoid } from './util/is.type';
 
-export { HandlerConfig } from './proxy/handler-config';
+export { HandlerConfig } from './expose/handler-config';

@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
-import { getJsonrpcInstance } from '@jsonrpc-rx/unit-test-tool';
 import { JsonrpcErrorMessage } from '@jsonrpc-rx/core';
+import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
 
 describe('onNotify', () => {
   it('onNotify invalid params', async ({ expect }) => {

@@ -40,7 +40,9 @@ export const asyncFuncParamsInterceptor: Interceptor<SafeContext> = (envInfo, sa
 
 function clientRequestHandler(resquestBody: JsonrpcRequestBody, safeContext: SafeContext) {
   // 识别请求参数中是否“方法参数”
-  const funcParams = Object.entries(resquestBody.params ?? []).filter(([_, para]) => toType(para) === 'function');
+  const funcParams = Object.entries(resquestBody.params ?? []).filter(
+    ([_, para]) => toType(para) === 'function' || toType(para) === 'asyncfunction',
+  );
   if (funcParams.length > 0) {
     const { funcFlatted } = safeContext;
     for (const [key, func] of funcParams) {

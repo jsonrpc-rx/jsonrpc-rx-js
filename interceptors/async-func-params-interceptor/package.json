@@ -30,6 +30,7 @@
     "@jsonrpc-rx/core": "0.0.1"
   },
   "devDependencies": {
-    "@jsonrpc-rx/unit-test-tool": "workspace:^"
+    "@jsonrpc-rx/server": "workspace:^",
+    "@jsonrpc-rx/client": "workspace:^"
   }
 }

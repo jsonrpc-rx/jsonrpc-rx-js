@@ -1,6 +1,7 @@
 import { describe, it } from 'vitest';
-import { getJsonrpcInstance, sleep } from '@jsonrpc-rx/unit-test-tool';
 import { Deferred, JsonrpcEnd, JsonrpcErrorMessage } from '@jsonrpc-rx/core';
+import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
+import { sleep } from './util/sleep';
 
 describe('onSubscribe', () => {
   it('onSubscribe normal', async ({ expect }) => {

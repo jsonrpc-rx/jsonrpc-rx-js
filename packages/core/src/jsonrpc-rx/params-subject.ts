@@ -1,15 +1,15 @@
 import { JsonrpcParams } from '../jsonrpc/jsonrpc-params';
 import { Dispose, IDisposable } from './disposable';
-import { ReturnPromiseEachItem } from '../util/return-promise.type';
+import { PromisifyReturnEach } from '../util/promisify.type';
 
-export interface Publisher<Value = any> {
-  next: (value?: Value) => void;
+export interface Publisher<T = any> {
+  next: (value?: T) => void;
   error: (error: any) => void;
   complete: () => void;
 }
 
 export interface SubscribeHandler<Params extends JsonrpcParams, PublishValue = any> {
-  (publisher: Publisher<PublishValue>, params: Params): Dispose;
+  (publisher: Publisher<PublishValue>, params?: Params): Dispose;
 }
 
 export interface ParamsSubject {
@@ -20,7 +20,7 @@ export interface ParamsSubject {
    */
   onSubscribe<Params extends JsonrpcParams, PublishValue = any>(
     subjectName: string,
-    subscribeHandler: SubscribeHandler<ReturnPromiseEachItem<Params>, PublishValue>,
+    subscribeHandler: SubscribeHandler<PromisifyReturnEach<Params>, PublishValue>,
   ): IDisposable;
 }
 

@@ -1,10 +1,7 @@
 import { describe, it } from 'vitest';
-import { getJsonrpcInstance } from '@jsonrpc-rx/unit-test-tool';
 import { Deferred, JsonrpcErrorMessage } from '@jsonrpc-rx/core';
-
-export function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
+import { sleep } from './util/sleep';
 
 describe('subscribe', () => {
   it('subscribe normal', async ({ expect }) => {
@@ -47,7 +44,8 @@ describe('subscribe', () => {
     const { jsonrpcClient, jsonrpcServer } = getJsonrpcInstance({ delay: 30 });
     const { promise, resolve } = new Deferred<number>();
 
-    jsonrpcServer.onSubscribe<[number, number], number>('sum', (publisher, [a, b]) => {
+    jsonrpcServer.onSubscribe<[number, number], number>('sum', (publisher, params) => {
+      const [a, b] = params!;
       const { next } = publisher;
       const timer = setTimeout(() => next(a + b));
       return () => {
@@ -69,7 +67,8 @@ describe('subscribe', () => {
     const { promise: promise03, resolve: resolve03 } = new Deferred<number>();
 
     const nextPublishers: any[] = [];
-    jsonrpcServer.onSubscribe<[number, number]>('hello', (publisher, [a, b]) => {
+    jsonrpcServer.onSubscribe<[number, number]>('hello', (publisher, params) => {
+      const [a, b] = params!;
       const { next } = publisher;
       nextPublishers.push(() => next(a + b));
       return () => {};

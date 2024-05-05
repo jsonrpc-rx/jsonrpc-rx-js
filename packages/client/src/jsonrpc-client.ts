@@ -51,6 +51,7 @@ export class JsonrpcClient implements IJsonrpcClient {
       disposable: IDisposable;
     }
   > = new Map();
+  private unifyQueryModeMap = new Map<string, 'call' | 'notify' | 'subscribe'>();
 
   private msgSenderCtx: MessageSenderCtx;
   private msgReceiverCtx: MessageReceiverCtx;
@@ -139,6 +140,25 @@ export class JsonrpcClient implements IJsonrpcClient {
       }
     });
   };
+
+  async $unify(name: string, args: any[]) {
+    console.log(name, args)
+    if (toType(name) != 'string') this.throwInvalidParamsError();
+
+    let mode: 'call' | 'notify' | 'subscribe';
+    if(this.unifyQueryModeMap.has(name)) {
+      mode = this.unifyQueryModeMap.get(name)!;
+    } else {
+      mode = await this.call<string>('inner_oncall_for_query_mode', [name]) as any;
+      this.unifyQueryModeMap.set(name, mode as any);
+    }
+
+    if(mode === 'subscribe') {
+      return this[mode](name, args[0], args.slice(1));
+    } else {
+      return this[mode](name, args);
+    }
+  }
 
   private receiveMessage() {
     const receiveHandler = (messageBody: MessageBody) => {

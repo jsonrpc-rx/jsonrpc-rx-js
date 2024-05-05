@@ -27,7 +27,7 @@ import {
   JsonrpcParams,
   JsonrpcBaseConfig,
   JsonrpcCostomError,
-  ReturnPromiseEachItem,
+  PromisifyReturnEach,
 } from '@jsonrpc-rx/core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -55,9 +55,23 @@ export class JsonrpcServer implements IJsonrpcServer {
     this.msgSenderCtx = new MessageSenderCtx(this.msgSender, interceptorSafeContextArr, this.jsonrpcBaseConfig);
     this.msgReceiverCtx = new MessageReceiverCtx(this.msgReceiver, interceptorSafeContextArr, this.jsonrpcBaseConfig);
     this.receiveMessage();
+
+    this.onCall('inner_oncall_for_query_mode', ([queryName]: string[]) => {
+      let mode = '';
+      if (this.notifyHandlerMap.has(queryName)) {
+        mode = 'notify';
+      } else if (this.callHandlerMap.has(queryName)) {
+        mode = 'call';
+      } else if (this.onSubscribeSubjectSet.has(queryName)) {
+        mode = 'subscribe';
+      } else {
+        this.throwParamsInternalError(`the method ${queryName} is repeated`);
+      }
+      return mode;
+    });
   }
 
-  onCall = <Params extends JsonrpcParams>(method: string, callHandler: (params: ReturnPromiseEachItem<Params>) => any): IDisposable => {
+  onCall = <Params extends JsonrpcParams>(method: string, callHandler: (params: PromisifyReturnEach<Params>) => any): IDisposable => {
     if (!(toType(method) === 'string' && (toType(callHandler) === 'function' || toType(callHandler) === 'asyncfunction'))) {
       this.throwParamsInternalError('the parameters invalid');
     }
@@ -70,7 +84,7 @@ export class JsonrpcServer implements IJsonrpcServer {
 
   onNotify = <Params extends JsonrpcParams>(
     notifyName: string,
-    notifyHandler: (params: ReturnPromiseEachItem<Params>) => void,
+    notifyHandler: (params: PromisifyReturnEach<Params>) => void,
   ): IDisposable => {
     if (!(toType(notifyName) === 'string' && (toType(notifyHandler) === 'function' || toType(notifyHandler) === 'asyncfunction'))) {
       this.throwParamsInternalError('the parameters invalid');
@@ -84,7 +98,7 @@ export class JsonrpcServer implements IJsonrpcServer {
 
   onSubscribe<Params extends JsonrpcParams, PublishValue = any>(
     subjectName: string,
-    subscribeHandler: SubscribeHandler<ReturnPromiseEachItem<Params>, PublishValue>,
+    subscribeHandler: SubscribeHandler<PromisifyReturnEach<Params>, PublishValue>,
   ): IDisposable {
     if (!(toType(subjectName) === 'string' && toType(subscribeHandler) === 'function'))
       this.throwParamsInternalError('the parameters invalid');

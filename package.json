@@ -11,13 +11,11 @@
     "build:client": "pnpm run -F @jsonrpc-rx/client build",
     "build:server": "pnpm run -F @jsonrpc-rx/server build",
     "build:async-func-params-interceptor": "pnpm run -F @jsonrpc-rx/async-func-params-interceptor build",
-    "build:unit-test-tool": "pnpm run -F @jsonrpc-rx/unit-test-tool build",
     "clean": "run-p clean:* && rm -rf node_modules",
     "clean:core": "pnpm run -F @jsonrpc-rx/core clean",
     "clean:client": "pnpm run -F @jsonrpc-rx/client clean",
     "clean:server": "pnpm run -F @jsonrpc-rx/server clean",
     "clean:async-func-params-interceptor": "pnpm run -F @jsonrpc-rx/async-func-params-interceptor clean",
-    "clean:unit-test-tool": "pnpm run -F @jsonrpc-rx/unit-test-tool clean",
     "format": "prettier . --write",
     "prepare": "husky install",
     "commitlint": "commitlint --edit"

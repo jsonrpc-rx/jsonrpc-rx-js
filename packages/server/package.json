@@ -31,6 +31,6 @@
     "flatted": "^3.2.9"
   },
   "devDependencies": {
-    "@jsonrpc-rx/unit-test-tool": "0.0.1"
+    "@jsonrpc-rx/client": "workspace:^"
   }
 }

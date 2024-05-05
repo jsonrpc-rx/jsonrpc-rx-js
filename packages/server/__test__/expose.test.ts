@@ -1,41 +1,34 @@
 import { it } from 'vitest';
 import { Publisher } from '@jsonrpc-rx/core';
-import { wrap, getJsonrpcInstance, sleep } from '@jsonrpc-rx/unit-test-tool';
-import { expose, exposeCall, exposeNotify, exposeSubscribe } from '../src';
+import { wrap } from '@jsonrpc-rx/client';
+import { asNotify, asSubjuct, expose } from '../src';
+import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
+import { sleep } from './util/sleep';
 
-it('expose: call, notify, subscribe ', async ({ expect }) => {
+it('expose ', async ({ expect }) => {
   const { jsonrpcServer, jsonrpcClient } = getJsonrpcInstance({ delay: 1 });
   let notifyContent = '';
   const handlerConfig = {
-    call: {
-      sum: (a: number, b: number) => {
-        return a + b;
-      },
+    sum: (a: number, b: number) => {
+      return a + b;
     },
-    notify: {
-      hello: (content: string) => (notifyContent = content),
-    },
-    subscribe: {
-      tick: ({ next }: Publisher<string>, token: string) => {
-        setTimeout(() => next(token));
-        return () => {};
-      },
-    },
+    hello: asNotify((content: string) => (notifyContent = content)),
+    tick: asSubjuct(({ next }: Publisher<string>, token: string) => {
+      setTimeout(() => next(token));
+      return () => {};
+    }),
   };
 
-  exposeCall(jsonrpcServer, handlerConfig.call);
-  exposeNotify(jsonrpcServer, handlerConfig.notify);
-  exposeSubscribe(jsonrpcServer, handlerConfig.subscribe);
-
+  expose(jsonrpcServer, handlerConfig);
   const remote = wrap<typeof handlerConfig>(jsonrpcClient);
-  const sum = await remote.call.sum(1, 2);
+  const sum = await remote.sum(1, 2);
   expect(sum).toEqual(3);
 
-  remote.notify.hello('1');
+  remote.hello('1');
   await sleep(10);
   expect(notifyContent).toEqual('1');
 
-  remote.subscribe.tick(
+  remote.tick(
     {
       next: (token) => expect(token).toEqual('token01'),
     },
@@ -45,7 +38,7 @@ it('expose: call, notify, subscribe ', async ({ expect }) => {
 
   // repeated error
   try {
-    exposeCall(jsonrpcServer, handlerConfig.call);
+    expose(jsonrpcServer, handlerConfig);
   } catch (error) {
     expect(error.toString().includes('the method sum is repeated')).toBeTruthy();
   }
@@ -55,41 +48,35 @@ it('expose: remove ', async ({ expect }) => {
   const { jsonrpcServer } = getJsonrpcInstance({ delay: 1 });
   let notifyContent = '';
   const handlerConfig = {
-    call: {
-      sum: (a: number, b: number) => a + b,
-    },
-    notify: {
-      hello: (content: string) => (notifyContent = content),
-    },
-    subscribe: {
-      tick: ({ next }: Publisher<string>, token: string) => {
-        setTimeout(() => next(token));
-        return () => {};
-      },
-    },
+    sum: (a: number, b: number) => a + b,
+    hello: (content: string) => (notifyContent = content),
+    tick: asSubjuct(({ next }: Publisher<string>, token: string) => {
+      setTimeout(() => next(token));
+      return () => {};
+    }),
   };
 
   const dispose = expose(jsonrpcServer, handlerConfig);
 
   // call remove
   await sleep(10);
-  dispose.call.removeSum();
+  dispose.removeSum();
   await sleep(10);
-  const disposeCall = exposeCall(jsonrpcServer, { sum: (a: number, b: number) => a + b });
+  const disposeCall = expose(jsonrpcServer, { sum: (a: number, b: number) => a + b });
   expect(disposeCall).toBeDefined();
 
   // notify remove
   await sleep(10);
-  dispose.notify.removeHello();
+  dispose.removeHello();
   await sleep(10);
-  const disposeNotify = exposeNotify(jsonrpcServer, { hello: (content: string) => (notifyContent = content) });
+  const disposeNotify = expose(jsonrpcServer, { hello: (content: string) => (notifyContent = content) });
   expect(disposeNotify).toBeDefined();
 
   // subscribe remove
   await sleep(10);
-  dispose.subscribe.removeTick();
+  dispose.removeTick();
   await sleep(10);
-  const disposeSubscribe = exposeSubscribe(jsonrpcServer, {
+  const disposeSubscribe = expose(jsonrpcServer, {
     tick: () => () => {},
   });
   expect(disposeSubscribe).toBeDefined();
