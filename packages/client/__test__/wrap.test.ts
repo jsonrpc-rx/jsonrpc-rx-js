@@ -1,5 +1,5 @@
 import { Publisher } from '@jsonrpc-rx/core';
-import { asNotify, asSubjuct, expose } from '@jsonrpc-rx/server';
+import { asNotify, asSubject, expose } from '@jsonrpc-rx/server';
 import { it } from 'vitest';
 import { wrap } from '../src/wrap';
 import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
@@ -14,11 +14,11 @@ it('wrap ', async ({ expect }) => {
     },
     upperCase: (a: string) => Promise.resolve(a.toUpperCase()),
     hello: asNotify((content: string) => (notifyContent = content)),
-    tick01: asSubjuct(({ next }: Publisher<string>, token: string) => {
+    tick01: asSubject(({ next }: Publisher<string>, token: string) => {
       setTimeout(() => next(token));
       return () => {};
     }),
-    tick02: asSubjuct(({ next }: Publisher<string>, token: string) => {
+    tick02: asSubject(({ next }: Publisher<string>, token: string) => {
       setTimeout(() => next(token));
       return () => {};
     }),
