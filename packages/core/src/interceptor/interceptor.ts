@@ -6,15 +6,15 @@ import { toType } from '../util/to-type';
 
 export type InterceptorEnvInfo = { end: JsonrpcEnd; type: MessageType; sendMessage?: (messageBody: MessageBody) => void };
 
-export type InterceptorSafeContext<T extends object = object> = T;
-export interface Interceptor<C extends object = object> {
+export type InterceptorSafeContext<T = any> = T;
+export interface Interceptor<C = any> {
   (
     envInfo: InterceptorEnvInfo,
     safeContext: InterceptorSafeContext<C>,
   ): ((messageBody: MessageBody) => Promise<MessageBody> | MessageBody | void) | void;
 }
 
-export function composeInterceptors(interceptorInfo: { interceptor: Interceptor; envInfo: InterceptorEnvInfo; safeContext: object }[]) {
+export function composeInterceptors(interceptorInfo: { interceptor: Interceptor; envInfo: InterceptorEnvInfo; safeContext: any }[]) {
   const actualInterceptors = interceptorInfo
     .map(({ interceptor, envInfo, safeContext }) => interceptor.call({}, envInfo, safeContext))
     .filter((item) => toType(item) === 'function');

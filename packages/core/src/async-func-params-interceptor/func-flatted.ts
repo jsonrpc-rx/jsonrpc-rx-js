@@ -1,4 +1,4 @@
-import { uuid } from '@jsonrpc-rx/core';
+import { uuid } from '../util/uuid';
 
 export class FuncFlatted {
   private static funcuuidRe = /@@Function@([\w\W]+)@@@/;

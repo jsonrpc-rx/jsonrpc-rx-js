@@ -1,15 +1,13 @@
-import {
-  Deferred,
-  Interceptor,
-  JsonrpcEnd,
-  JsonrpcRequestBody,
-  JsonrpcResponseBody,
-  MessageBody,
-  MessageType,
-  invokeAsPromise,
-  toType,
-} from '@jsonrpc-rx/core';
+import { Deferred } from '../util/deferred';
+import { toType } from '../util/to-type';
+import { invokeAsPromise } from '../util/invoke-as-promise';
+import { JsonrpcEnd } from '../jsonrpc/jsonrpc-end';
+import { JsonrpcRequestBody } from '../jsonrpc/jsonrpc-request-body';
+import { JsonrpcResponseBody } from '../jsonrpc/jsonrpc-response-body';
+import { MessageType } from '../message/message-type';
 import { FuncFlatted } from './func-flatted';
+import { Interceptor } from '../interceptor/interceptor';
+import { MessageBody } from '../message/message-body';
 
 type SafeContext = {
   sendMessage: (messageBody: MessageBody) => void;

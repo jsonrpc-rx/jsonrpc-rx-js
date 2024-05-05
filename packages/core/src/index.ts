@@ -35,3 +35,5 @@ export { IsNotStrictAny, IsStrictAny, IsStrictVoid, IsVoid } from './util/is.typ
 
 export { HandlerConfig } from './expose/handler-config';
 export { INNER_ONCALL_FOR_QUERY_MODE, ExposeMode } from './expose/query-mode';
+
+export { asyncFuncParamsInterceptor } from './async-func-params-interceptor';

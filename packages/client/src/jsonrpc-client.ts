@@ -28,6 +28,7 @@ import {
   JsonrpcCostomError,
   INNER_ONCALL_FOR_QUERY_MODE,
   ExposeMode,
+  asyncFuncParamsInterceptor,
 } from '@jsonrpc-rx/core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -61,14 +62,18 @@ export class JsonrpcClient implements IJsonrpcClient {
   constructor(
     private msgSender: MessageSender,
     private msgReceiver: MessageReceiver,
-    private jsonrpcClientConfig?: JsonrpcClientConfig,
+    private jsonrpcClientConfig: JsonrpcClientConfig = {},
   ) {
     const isJsonrpcClientConfig =
       toType(msgSender) === 'function' && toType(msgReceiver) === 'function' && this.isJsonrpcClientConfig(jsonrpcClientConfig!);
-    if (!isJsonrpcClientConfig) {
-      this.throwInvalidParamsError();
-    }
-    const interceptorNum = this.jsonrpcClientConfig?.interceptors?.length ?? 0;
+    if (!isJsonrpcClientConfig) this.throwInvalidParamsError();
+
+    // 设置内置拦截器
+    const outerInterceptors = this.jsonrpcClientConfig?.interceptors ?? [];
+    this.jsonrpcClientConfig.interceptors = [asyncFuncParamsInterceptor, ...outerInterceptors];
+
+    // 初始化拦截器的上下文
+    const interceptorNum = this.jsonrpcClientConfig.interceptors?.length ?? 0;
     const interceptorSafeContextArr = '.'
       .repeat(interceptorNum)
       .split('')
@@ -147,14 +152,14 @@ export class JsonrpcClient implements IJsonrpcClient {
     if (toType(name) != 'string') this.throwInvalidParamsError();
 
     let mode: ExposeMode;
-    if(this.unifyQueryModeMap.has(name)) {
+    if (this.unifyQueryModeMap.has(name)) {
       mode = this.unifyQueryModeMap.get(name)!;
     } else {
       mode = await this.call<ExposeMode>(INNER_ONCALL_FOR_QUERY_MODE, [name]);
       this.unifyQueryModeMap.set(name, mode);
     }
 
-    if(mode === 'subscribe') {
+    if (mode === 'subscribe') {
       return this[mode](name, args[0], args.slice(1));
     } else {
       return this[mode](name, args);

@@ -60,19 +60,6 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(@types/node@20.12.7)
 
-  interceptors/async-func-params-interceptor:
-    dependencies:
-      '@jsonrpc-rx/core':
-        specifier: 0.0.1
-        version: link:../../packages/core
-    devDependencies:
-      '@jsonrpc-rx/client':
-        specifier: workspace:^
-        version: link:../../packages/client
-      '@jsonrpc-rx/server':
-        specifier: workspace:^
-        version: link:../../packages/server
-
   packages/client:
     dependencies:
       '@jsonrpc-rx/core':

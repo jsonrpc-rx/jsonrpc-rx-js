@@ -30,6 +30,7 @@ import {
   PromisifyReturnEach,
   INNER_ONCALL_FOR_QUERY_MODE,
   ExposeMode,
+  asyncFuncParamsInterceptor,
 } from '@jsonrpc-rx/core';
 import { MessageSenderCtx } from './message-sender-ctx';
 import { MessageReceiverCtx } from './message-receiver-ctx';
@@ -47,8 +48,13 @@ export class JsonrpcServer implements IJsonrpcServer {
   constructor(
     private msgSender: MessageSender,
     private msgReceiver: MessageReceiver,
-    private jsonrpcBaseConfig?: JsonrpcBaseConfig,
+    private jsonrpcBaseConfig: JsonrpcBaseConfig = {},
   ) {
+    // 设置内置拦截器
+    const outerInterceptors = this.jsonrpcBaseConfig?.interceptors ?? [];
+    this.jsonrpcBaseConfig.interceptors = [asyncFuncParamsInterceptor, ...outerInterceptors];
+
+    // 初始化拦截器的上下文
     const interceptorNum = this.jsonrpcBaseConfig?.interceptors?.length ?? 0;
     const interceptorSafeContextArr = '.'
       .repeat(interceptorNum)

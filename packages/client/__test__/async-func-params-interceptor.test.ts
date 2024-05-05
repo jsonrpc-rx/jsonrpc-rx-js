@@ -1,17 +1,12 @@
-import { it, describe } from 'vitest';
-import { Interceptor } from '@jsonrpc-rx/core';
-import { asyncFuncParamsInterceptor } from '../src';
+import { it } from 'vitest';
+import { describe } from 'vitest';
 import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
 import { sleep } from './util/sleep';
-
-const afpInterceptor = asyncFuncParamsInterceptor as Interceptor<object>;
 
 describe('asyncFuncParamsInterceptor for call', () => {
   it('call normal', async ({ expect }) => {
     const { jsonrpcClient, jsonrpcServer } = getJsonrpcInstance({
       delay: 100,
-      client: { interceptors: [afpInterceptor] },
-      server: { interceptors: [afpInterceptor] },
     });
 
     jsonrpcServer.onCall<[number, (a: number, b: number) => number]>('ADD', async ([a, operation]) => {
@@ -24,8 +19,6 @@ describe('asyncFuncParamsInterceptor for call', () => {
   it('call error', async ({ expect }) => {
     const { jsonrpcClient, jsonrpcServer } = getJsonrpcInstance({
       delay: 100,
-      client: { interceptors: [afpInterceptor] },
-      server: { interceptors: [afpInterceptor] },
     });
 
     jsonrpcServer.onCall<[() => void]>('throwError', async ([operation]) => {
@@ -47,8 +40,6 @@ describe('asyncFuncParamsInterceptor for notify', () => {
   it('notify normal', async ({ expect }) => {
     const { jsonrpcClient, jsonrpcServer } = getJsonrpcInstance({
       delay: 10,
-      client: { interceptors: [afpInterceptor] },
-      server: { interceptors: [afpInterceptor] },
     });
 
     jsonrpcServer.onNotify<[(next: string) => string, string]>('hello', async ([sayHello, p]) => {
@@ -65,11 +56,10 @@ describe('asyncFuncParamsInterceptor for subscribe', () => {
     // 这里将实现一个 Behaviorsubject 的例子
     const { jsonrpcClient, jsonrpcServer } = getJsonrpcInstance({
       delay: 10,
-      client: { interceptors: [afpInterceptor] },
-      server: { interceptors: [afpInterceptor] },
     });
 
-    jsonrpcServer.onSubscribe<[(state: number) => string]>('hello', (publisher, [asFirst]) => {
+    jsonrpcServer.onSubscribe<[(state: number) => string]>('hello', (publisher, params) => {
+      const [asFirst] = params!;
       const { next } = publisher;
       asFirst(1);
       const timer = setTimeout(() => next(2), 100);
