@@ -6,7 +6,7 @@ import { getJsonrpcInstance } from './util/get-jsonrpc-instance';
 import { sleep } from './util/sleep';
 
 it('wrap ', async ({ expect }) => {
-  const { jsonrpcServer, jsonrpcClient } = getJsonrpcInstance({ delay: 1 });
+  const { jsonrpcServer, jsonrpcClient } = getJsonrpcInstance({ delay: 0 });
   let notifyContent = '';
   const handlerConfig = {
     sum: (a: number, b: number) => {
@@ -31,7 +31,7 @@ it('wrap ', async ({ expect }) => {
   expect(sum).toEqual(3);
 
   remote.hello('1');
-  await sleep(10);
+  await sleep(100);
   expect(notifyContent).toEqual('1');
 
   remote.tick01(

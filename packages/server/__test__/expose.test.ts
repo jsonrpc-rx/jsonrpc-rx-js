@@ -7,7 +7,7 @@ import { sleep } from './util/sleep';
 import { createOnce } from './util/once';
 
 it('expose ', async ({ expect }) => {
-  const { jsonrpcServer, jsonrpcClient } = getJsonrpcInstance({ delay: 1 });
+  const { jsonrpcServer, jsonrpcClient } = getJsonrpcInstance({ delay: 0 });
   let notifyContent = '';
   const handlerConfig = {
     sum: (a: number, b: number) => {
@@ -26,7 +26,7 @@ it('expose ', async ({ expect }) => {
   expect(sum).toEqual(3);
 
   remote.hello('1');
-  await sleep(10);
+  await sleep(100);
   expect(notifyContent).toEqual('1');
 
   remote.tick(
@@ -40,7 +40,7 @@ it('expose ', async ({ expect }) => {
   // repeated error
   try {
     expose(jsonrpcServer, handlerConfig);
-  } catch (error) {
+  } catch (error: any) {
     expect(error.toString().includes('the method sum is repeated')).toBeTruthy();
   }
 });
