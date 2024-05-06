@@ -65,7 +65,7 @@ importers:
   packages/client:
     dependencies:
       '@jsonrpc-rx/core':
-        specifier: 0.1.1
+        specifier: ^0.2.0
         version: link:../core
       flatted:
         specifier: ^3.2.9
@@ -85,7 +85,7 @@ importers:
     dependencies:
       '@jsonrpc-rx/core':
         specifier: 0.1.1
-        version: link:../core
+        version: 0.1.1
       flatted:
         specifier: ^3.2.9
         version: 3.2.9
@@ -577,6 +577,12 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
+
+  /@jsonrpc-rx/core@0.1.1:
+    resolution: {integrity: sha512-ueC9kVV5ugByqAOstIu3zg+I/wwYa0ZR2GpgABwuN/kTaP/I8XqhzoJI5E2zXn0T4UHsBpLDtTmHunHdDL3dUw==}
+    dependencies:
+      flatted: 3.2.9
+    dev: false
 
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
