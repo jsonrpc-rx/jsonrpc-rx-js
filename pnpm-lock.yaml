@@ -65,7 +65,7 @@ importers:
   packages/client:
     dependencies:
       '@jsonrpc-rx/core':
-        specifier: 0.1.0
+        specifier: 0.1.1
         version: link:../core
       flatted:
         specifier: ^3.2.9
@@ -84,7 +84,7 @@ importers:
   packages/server:
     dependencies:
       '@jsonrpc-rx/core':
-        specifier: 0.1.0
+        specifier: 0.1.1
         version: link:../core
       flatted:
         specifier: ^3.2.9
