@@ -60,10 +60,12 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(@types/node@20.12.7)
 
+  packages/adapters: {}
+
   packages/client:
     dependencies:
       '@jsonrpc-rx/core':
-        specifier: 0.0.1
+        specifier: 0.1.0
         version: link:../core
       flatted:
         specifier: ^3.2.9
@@ -82,7 +84,7 @@ importers:
   packages/server:
     dependencies:
       '@jsonrpc-rx/core':
-        specifier: 0.0.1
+        specifier: 0.1.0
         version: link:../core
       flatted:
         specifier: ^3.2.9
