@@ -33,7 +33,7 @@ export { uuid } from './util/uuid';
 export { Promisify, PromisifyReturnEach, PromisifyReturn } from './util/promisify.type';
 export { IsNotStrictAny, IsStrictAny, IsStrictVoid, IsVoid } from './util/is.type';
 
-export { HandlerConfig } from './expose/handler-config';
+export { HandlerConfig, Observable, Notifiable, Callable } from './expose/type';
 export { INNER_ONCALL_FOR_QUERY_MODE, ExposeMode } from './expose/query-mode';
 
 export { asyncFuncParamsInterceptor } from './async-func-params-interceptor';
