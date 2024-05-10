@@ -98,7 +98,7 @@ jsonrpc-rx 提供了友好的类型提示。如图：
 
 参数可为 Function 类型是由拦截器实现的，通过一个[示例](https://github.com/jsonrpc-rx/jsonrpc-rx-samples/tree/main/packages/webworker-plus)了解下如何使用 Function 类型参数：
 
-![](https://raw.githubusercontent.com/jsonrpc-rx/jsonrpc-rx-js/main/documents/images/jsonrpc-rx-code-sample.png)
+![](https://raw.githubusercontent.com/jsonrpc-rx/jsonrpc-rx-js/main/documents/images/jsonrpc-rx-func-params.png)
 
 ## API
 
