@@ -8,7 +8,7 @@ RPC 通讯让使用者像调用“本地方法”一样地调用“远端方法�
 
 下面通过一个 webworker 的示例来认识 jsonrpc-rx：
 
-![](D:\AAAAA\self\jsonrpc-rx\documents\images\jsonrpc-rx-code-sample.png)
+![](https://raw.githubusercontent.com/jsonrpc-rx/jsonrpc-rx-js/main/documents/images/jsonrpc-rx-code-sample.png)
 
 上面示例展示了  jsonrpc-rx 在 webworker 通讯中的应用，除此之外，jsonrpc-rx 更多的领域有着更广泛的应用，我们也提供了丰富的示例。
 
@@ -84,7 +84,7 @@ core 是为 server 和 client 提供公共能力的库。如果需要自定义�
 
 jsonrpc-rx 提供了友好的类型提示。如图：
 
-![](D:\AAAAA\self\jsonrpc-rx\documents\images\jsonrpc-rx-type-tip.png)
+![](https://raw.githubusercontent.com/jsonrpc-rx/jsonrpc-rx-js/main/documents/images/jsonrpc-rx-type-tip.png)
 
 
 
@@ -98,7 +98,7 @@ jsonrpc-rx 提供了友好的类型提示。如图：
 
 参数可为 Function 类型是由拦截器实现的，通过一个[示例](https://github.com/jsonrpc-rx/jsonrpc-rx-samples/tree/main/packages/webworker-plus)了解下如何使用 Function 类型参数：
 
-![](D:\AAAAA\self\jsonrpc-rx\documents\images\jsonrpc-rx-func-params.png)
+![](https://raw.githubusercontent.com/jsonrpc-rx/jsonrpc-rx-js/main/documents/images/jsonrpc-rx-code-sample.png)
 
 ## API
 
