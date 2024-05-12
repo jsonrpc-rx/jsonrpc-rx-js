@@ -26,8 +26,6 @@ import {
   Observer,
   JsonrpcParams,
   JsonrpcCostomError,
-  INNER_ONCALL_FOR_QUERY_MODE,
-  ExposeMode,
   asyncFuncParamsInterceptor,
 } from '@jsonrpc-rx/core';
 import { MessageSenderCtx } from './message-sender-ctx';
@@ -54,7 +52,6 @@ export class JsonrpcClient implements IJsonrpcClient {
       disposable: IDisposable;
     }
   > = new Map();
-  private unifyQueryModeMap = new Map<string, ExposeMode>();
 
   private msgSenderCtx: MessageSenderCtx;
   private msgReceiverCtx: MessageReceiverCtx;
@@ -147,24 +144,6 @@ export class JsonrpcClient implements IJsonrpcClient {
       }
     });
   };
-
-  async _unify(name: string, args: any[]) {
-    if (toType(name) != 'string') this.throwInvalidParamsError();
-
-    let mode: ExposeMode;
-    if (this.unifyQueryModeMap.has(name)) {
-      mode = this.unifyQueryModeMap.get(name)!;
-    } else {
-      mode = await this.call<ExposeMode>(INNER_ONCALL_FOR_QUERY_MODE, [name]);
-      this.unifyQueryModeMap.set(name, mode);
-    }
-
-    if (mode === 'subscribe') {
-      return this[mode](name, args[0], args.slice(1));
-    } else {
-      return this[mode](name, args);
-    }
-  }
 
   private receiveMessage() {
     const receiveHandler = (messageBody: MessageBody) => {
